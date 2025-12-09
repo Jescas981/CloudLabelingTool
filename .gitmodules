@@ -1,0 +1,9 @@
+[submodule "cloudanntool/external/imgui"]
+	path = cloudanntool/external/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "cloudanntool/external/entt"]
+	path = cloudanntool/external/entt
+	url = https://github.com/skypjack/entt.git
+[submodule "pointcloudtool/external/nativefiledialog-extended"]
+	path = pointcloudtool/external/nativefiledialog-extended
+	url = https://github.com/btzy/nativefiledialog-extended.git
