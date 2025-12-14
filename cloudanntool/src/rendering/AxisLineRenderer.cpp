@@ -64,8 +64,6 @@ void AxisLineRenderer::render(const Camera &camera) {
   shader_->bind();
   shader_->setMat4("uViewProjection", camera.getViewProjectionMatrix());
   shader_->setMat4("uModel", Eigen::Matrix4f::Identity());
-    std::cout << camera.getViewMatrix() << std::endl;
-
   // Draw axes
   vertexArray_->bind();
   glDrawArrays(GL_LINES, 0, 6);

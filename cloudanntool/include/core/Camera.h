@@ -56,9 +56,6 @@ public:
     const Eigen::Vector3f& getRight() const { return right_; }
     const Eigen::Vector3f& getOrbitTarget() const { return orbitTarget_; }
     float getOrbitDistance() const { return orbitDistance_; }
-
-    Eigen::Matrix4f getViewMatrix() const;
-    Eigen::Matrix4f getProjectionMatrix() const;
     Eigen::Matrix4f getViewProjectionMatrix() const;
 
     float getFOV() const { return fov_; }
@@ -76,6 +73,8 @@ public:
 private:
     void updateCameraVectors();
     void updateOrbitPosition();
+    Eigen::Matrix4f getViewMatrix() const;
+    Eigen::Matrix4f getProjectionMatrix() const;
 
     // Camera attributes
     Eigen::Vector3f position_;

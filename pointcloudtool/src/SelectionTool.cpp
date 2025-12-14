@@ -171,13 +171,8 @@ Eigen::Vector2f SelectionTool::projectToScreen(
     int windowWidth,
     int windowHeight) const
 {
-    // Get view and projection matrices
-    Eigen::Matrix4f view = camera->getViewMatrix();
-    Eigen::Matrix4f proj = camera->getProjectionMatrix();
-    Eigen::Matrix4f viewProj = proj * view;
-
     // Transform to clip space
-    Eigen::Vector4f clipPos = viewProj * Eigen::Vector4f(worldPos.x(), worldPos.y(), worldPos.z(), 1.0f);
+    Eigen::Vector4f clipPos = camera->getViewProjectionMatrix() * Eigen::Vector4f(worldPos.x(), worldPos.y(), worldPos.z(), 1.0f);
 
     // Perspective divide
     if (std::abs(clipPos.w()) > 1e-6f) {

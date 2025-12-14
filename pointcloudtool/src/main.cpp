@@ -64,7 +64,7 @@ public:
     cameraController_ = std::make_unique<CameraController>(getCamera());
     uiManager_ = std::make_unique<UIManager>(sceneController_.get());
 
-    cameraController_->setMode(CameraMode::FPS);
+    cameraController_->setMode(CameraMode::Orbit);
 
     // Layers
     auto renderLayer = std::make_unique<RenderLayer>(*scene.get(), *getCamera());

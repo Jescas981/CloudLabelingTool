@@ -12,10 +12,10 @@ namespace CloudCore {
 
 Camera::Camera()
     : position_(0.0f, 0.0f, 0.0f)
-    , front_(0.0f, 1.0f, 0.0f)
-    , up_(0.0f, 0.0f, 1.0f)
+    , front_(0.0f, 0.0f, 1.0f)
+    , up_(0.0f, 1.0f, 0.0f)
     , right_(1.0f, 0.0f, 0.0f)
-    , worldUp_(0.0f, 0.0f, 1.0f)
+    , worldUp_(0.0f, 1.0f, 0.0f)
     , yaw_(0.0f)
     , pitch_(0.0f)
     , orbitTarget_(0.0f, 0.0f, 0.0f)
@@ -151,7 +151,18 @@ void Camera::zoom(float amount)
 }
 
 Eigen::Matrix4f Camera::getViewProjectionMatrix() const {
-    return getProjectionMatrix() * getViewMatrix(); 
+    // Create 4x4 transformation matrix
+    Eigen::Matrix4f Z_UP_TO_OPENGL = Eigen::Matrix4f::Identity();
+    
+    // Get 3x3 rotation and embed it in the 4x4 matrix
+    Eigen::Matrix3f rotation = (Eigen::AngleAxisf(-M_PI/2.0f, Eigen::Vector3f::UnitX()))
+                                .toRotationMatrix();
+    Z_UP_TO_OPENGL.block<3,3>(0,0) = rotation;
+    
+    Eigen::Matrix4f glView = getViewMatrix() * Z_UP_TO_OPENGL; 
+    Eigen::Matrix4f projection = getProjectionMatrix();
+    Eigen::Matrix4f PV = projection * glView;
+    return PV;
 }
 
 Eigen::Matrix4f Camera::getViewMatrix() const
@@ -226,8 +237,8 @@ void Camera::updateCameraVectors()
     float pitchRad = pitch_ * M_PI / 180.0f;
 
     front.x() = std::sin(yawRad) * std::cos(pitchRad);
-    front.y() = std::cos(yawRad) * std::cos(pitchRad);
-    front.z() = std::sin(pitchRad);
+    front.y() = std::sin(pitchRad);
+    front.z() = std::cos(yawRad) * std::cos(pitchRad);
 
     front_ = front.normalized();
     right_ = front_.cross(worldUp_).normalized();
@@ -304,8 +315,8 @@ void Camera::updateOrbitPosition()
     // Calculate position relative to target
     Eigen::Vector3f offset;
     offset.x() = orbitDistance_ * std::cos(pitchRad) * std::sin(yawRad);
-    offset.y() = orbitDistance_ * std::cos(pitchRad) * std::cos(yawRad); 
-    offset.z() = orbitDistance_ * std::sin(pitchRad);
+    offset.y() = orbitDistance_ * std::sin(pitchRad);
+    offset.z() = orbitDistance_ * std::cos(pitchRad) * std::cos(yawRad); 
 
     position_ = orbitTarget_ + offset;
 
@@ -313,7 +324,7 @@ void Camera::updateOrbitPosition()
     front_ = (orbitTarget_ - position_).normalized();
     right_ = front_.cross(worldUp_).normalized();
     up_ = right_.cross(front_).normalized();
-}
+}   
 
 // View presets
 void Camera::setViewFront()

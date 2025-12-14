@@ -64,10 +64,8 @@ bool Application::initialize(int width, int height) {
     CC_CORE_DEBUG("ImGui layer initialized");
 
     // Create camera
-    Eigen::Vector3f worldUp{0,0,1};
     camera_ = std::make_unique<Camera>();
-    camera_->setPosition(Eigen::Vector3f(0.0f, -5.0f, 0.0f));
-    camera_->setUp(worldUp);
+    // camera_->setPosition(Eigen::Vector3f(0.0f, -5.0f, 0.0f));
     camera_->setTarget(Eigen::Vector3f(0.0f, 0.0f, 0.0f));
     camera_->setPerspective(45.0f, static_cast<float>(width) / height, 0.1f, 100.0f);
     CC_CORE_DEBUG("Camera initialized");

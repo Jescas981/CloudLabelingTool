@@ -48,7 +48,7 @@ A lightweight engine for rendering and visualizing point clouds with customizabl
 ## Known Issues / TODO
 There are many issues to fix, but I will try to finish this in a productive version at least
 
-* Fix coordinate system: currently not fully Z-up
+* Fix coordinate system: currently not fully Z-up [In process]
 * Implement additional camera controls (orbit, pan, zoom)
 * Fix labeling system
 * Add point cloud editing and filtering
