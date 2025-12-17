@@ -22,8 +22,3 @@ CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 compile_commands.json
-
-# External libraries (manage via submodules or package manager)
-external/glad/
-external/glfw/
-external/eigen/

@@ -7,3 +7,9 @@
 [submodule "pointcloudtool/external/nativefiledialog-extended"]
 	path = pointcloudtool/external/nativefiledialog-extended
 	url = https://github.com/btzy/nativefiledialog-extended.git
+[submodule "cloudanntool/external/spdlog"]
+	path = cloudanntool/external/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "cloudanntool/external/glfw"]
+	path = cloudanntool/external/glfw
+	url = https://github.com/glfw/glfw.git
