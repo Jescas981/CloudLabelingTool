@@ -24,23 +24,18 @@ uniform mat4 uViewProjection;
 uniform mat4 uModel;
 uniform float uPointSize;
 
-// Rendering modes: 0=RGB, 1=FlatColor, 2=AxisX, 3=AxisY, 4=AxisZ, 5=Gradient
-uniform int uSelectedRenderMode;    // Rendering mode for selected points
-uniform int uUnselectedRenderMode;  // Rendering mode for unselected points
-
-// Colors for flat color rendering
+// Colors for selection purposes
 uniform vec3 uSelectedColor;
 uniform vec3 uUnselectedColor;
+uniform vec3 uSelectionColor;
 
 // Label colors (up to 256 labels)
 uniform bool uShowLabels;
 uniform vec3 uLabelColors[256];
 
-// Legacy selection (backward compatibility)
+// Rendering modes: 0=RGB, 1=FlatColor, 2=AxisX, 3=AxisY, 4=AxisZ, 5=Gradient
 uniform int uColorMode;
-uniform vec3 uSingleColor;
-uniform bool uSelected;
-uniform vec3 uSelectionColor;
+uniform bool uSelected;  // Rendering mode for selected object
 
 // Bounding box for axis coloring and gradients
 uniform vec3 uBoundsMin;
@@ -115,7 +110,7 @@ void main()
     gl_Position = uViewProjection * worldPosition;
     gl_PointSize = uPointSize;
 
-    // Check legacy selection first (backward compatibility)
+    // Select the object
     if (uSelected) {
         vertexColor = uSelectionColor;
         return;
@@ -133,6 +128,6 @@ void main()
         vertexColor = uLabelColors[labelId];
     } else {
         // Apply unselected rendering mode
-        vertexColor = applyRenderMode(uUnselectedRenderMode, aPosition, aColor, uUnselectedColor);
+        vertexColor = applyRenderMode(uColorMode, aPosition, aColor, uUnselectedColor);
     }
 }

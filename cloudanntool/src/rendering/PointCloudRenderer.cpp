@@ -80,9 +80,7 @@ void PointCloudRenderer::render(const PointCloud &pointCloud,
   // Set rendering mode - same for selected and unselected, but selected uses
   // selectionColor
   int colorMode = static_cast<int>(component.colorMode);
-  shader_->setInt("uSelectedRenderMode",
-                  1); // FlatColor mode for selected points
-  shader_->setInt("uUnselectedRenderMode", colorMode);
+  shader_->setInt("uColorMode", colorMode); // FlatColor mode for selected points
   shader_->setFloat3("uSelectedColor", component.selectionColor);
   shader_->setFloat3("uUnselectedColor", component.flatColor);
 
@@ -165,6 +163,7 @@ void PointCloudRenderer::updateBuffers(const PointCloud &pointCloud,
         i < component.selectionMask.size()) {
       selectionValue = (component.selectionMask[i] != 0) ? 1.0f : 0.0f;
     }
+  
     vertexData.push_back(selectionValue);
 
     // Label ID (0-255)
@@ -173,6 +172,7 @@ void PointCloudRenderer::updateBuffers(const PointCloud &pointCloud,
       labelValue = static_cast<float>(component.labels[i]);
     }
     vertexData.push_back(labelValue);
+
   }
 
   auto vertexBuffer = VertexBuffer::create(vertexData.data(),
@@ -185,6 +185,7 @@ void PointCloudRenderer::updateBuffers(const PointCloud &pointCloud,
       {ShaderDataType::Float, "aLabel"}          // 1 float for label
   });
 
+  vertexArray_->clearVertexBuffers();
   vertexArray_->addVertexBuffer(vertexBuffer);
 
   vertexArray_->unbind();

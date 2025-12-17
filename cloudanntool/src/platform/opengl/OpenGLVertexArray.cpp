@@ -34,7 +34,10 @@ void OpenGLVertexArray::bind() const { glBindVertexArray(rendererID_); }
 
 void OpenGLVertexArray::unbind() const { glBindVertexArray(0); }
 
-void OpenGLVertexArray::clearVertexBuffers() { vertexBuffers_.clear(); }
+void OpenGLVertexArray::clearVertexBuffers() {
+  vertexBuffers_.clear();
+  vertexBufferIndex_ = 0;
+}
 
 void OpenGLVertexArray::addVertexBuffer(
     const std::shared_ptr<VertexBuffer> &vertexBuffer) {

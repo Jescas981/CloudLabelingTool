@@ -1,27 +1,25 @@
 #pragma once
-
-#include "renderer/Shader.h"
-#include "renderer/VertexArray.h"
-#include <Eigen/Core>
 #include <memory>
+#include "renderer/VertexArray.h"
+#include "renderer/Shader.h"
 
 namespace CloudCore {
 
-class Shader;
 class Camera;
 
 class AxisLineRenderer {
 public:
-  AxisLineRenderer();
-  ~AxisLineRenderer();
+    AxisLineRenderer();
+    ~AxisLineRenderer();
 
-  void initialize();
-
-    void render(const Camera &camera);
+    void initialize();
+    void render(const Camera& camera);
 
 private:
-  std::shared_ptr<Shader> shader_;
-  std::shared_ptr<VertexArray> vertexArray_;
+    std::shared_ptr<VertexArray> vertexArray_;
+    std::shared_ptr<Shader> shader_;
+    size_t gridVertexCount_ = 0;
+    size_t totalVertexCount_ = 0;
 };
 
 } // namespace CloudCore
