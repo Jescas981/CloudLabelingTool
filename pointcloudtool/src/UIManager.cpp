@@ -915,9 +915,14 @@ void UIManager::renderLabelingToolbox()
         const auto& labels = labelDef->getAllLabels();
 
         // Show All button
-        if (ImGui::Button("Show All", ImVec2(150, 0))) {
+        if (ImGui::Button("Show All labels", ImVec2(150, 0))) {
             selectedObj->showAllLabels();
             CC_CORE_INFO("All labels shown");
+        }
+
+        if (ImGui::Button("Focus select", ImVec2(150, 0))) {
+            selectedObj->showSelection();
+            CC_CORE_INFO("Focus on selection only");
         }
 
         ImGui::Spacing();
@@ -952,33 +957,6 @@ void UIManager::renderLabelingToolbox()
 
             visButtonCount++;
             if (visButtonCount % visButtonsPerRow != 0) {
-                ImGui::SameLine();
-            }
-        }
-
-        ImGui::Spacing();
-
-        // "Show Only" buttons
-        ImGui::Text("Show only:");
-        int onlyButtonCount = 0;
-        for (const auto& label : labels) {
-            if (onlyButtonCount >= 6) break;
-
-            ImVec4 btnColor(label.color.x(), label.color.y(), label.color.z(), 1.0f);
-            ImGui::PushStyleColor(ImGuiCol_Button, btnColor);
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(btnColor.x * 1.2f, btnColor.y * 1.2f, btnColor.z * 1.2f, 1.0f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(btnColor.x * 0.8f, btnColor.y * 0.8f, btnColor.z * 0.8f, 1.0f));
-
-            std::string buttonLabel = "Only " + std::to_string(label.id) + ": " + label.name;
-            if (ImGui::Button(buttonLabel.c_str(), ImVec2(150, 0))) {
-                selectedObj->hideAllExceptLabel(label.id);
-                CC_CORE_INFO("Showing only label {}", label.id);
-            }
-
-            ImGui::PopStyleColor(3);
-
-            onlyButtonCount++;
-            if (onlyButtonCount % visButtonsPerRow != 0) {
                 ImGui::SameLine();
             }
         }

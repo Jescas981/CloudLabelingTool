@@ -74,6 +74,7 @@ public:
     // Visibility management
     void hideLabel(uint8_t labelId);
     void showLabel(uint8_t labelId);
+    void showSelection();
     void showAllLabels();
     void hideAllExceptLabel(uint8_t labelId);
     bool isLabelHidden(uint8_t labelId) const;

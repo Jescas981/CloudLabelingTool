@@ -323,6 +323,34 @@ void PointCloudObject::hideLabel(uint8_t labelId)
     CC_CORE_INFO("Hidden label {} - {} points hidden", labelId, hiddenCount);
 }
 
+void PointCloudObject::showSelection()
+{
+    auto* comp = getComponent();
+    if (!comp) return;
+    
+    size_t numPoints = pointCloud_->size();
+    
+    // Initialize visibility mask if empty
+    if (comp->visibilityMask.empty()) {
+        comp->visibilityMask.assign(numPoints, 0); // Start with all hidden
+    }
+    
+    // Hide all points first
+    comp->visibilityMask.assign(numPoints, 0);
+    
+    // Show only selected points
+    if (!comp->selectionMask.empty()) {
+        for (size_t i = 0; i < comp->selectionMask.size() && i < numPoints; ++i) {
+            if (comp->selectionMask[i] != 0) {
+                comp->visibilityMask[i] = 1; // Make selected points visible
+            }
+        }
+    }
+    
+    CC_CORE_INFO("showSelection: {} points visible out of {}", 
+                 selectedPoints_.size(), numPoints);
+}
+
 void PointCloudObject::showLabel(uint8_t labelId)
 {
     auto* comp = getComponent();

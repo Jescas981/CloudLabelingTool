@@ -67,7 +67,8 @@ public:
     cameraController_->setMode(CameraMode::Orbit);
 
     // Layers
-    auto renderLayer = std::make_unique<RenderLayer>(*scene.get(), *getCamera());
+    auto renderLayer =
+        std::make_unique<RenderLayer>(*scene.get(), *getCamera());
     this->getLayerStack().pushLayer(std::move(renderLayer));
 
     // Set exit callback
@@ -85,8 +86,8 @@ public:
 
   void onUpdate(Timestep deltaTime) override {
     // Update scene (updates all objects)
-    sceneController_->update(deltaTime);
-    cameraController_->onUpdate(deltaTime);
+    // sceneController_->update(deltaTime);
+    // cameraController_->onUpdate(deltaTime);
 
     // Capture frame if recording
     if (ImageExporter::isRecording()) {
@@ -128,8 +129,12 @@ public:
       });
     }
 
-    // Camera controls (if not handled by keyboard or selection tool)
+    if (!e.isHandled() &&
+        uiManager_->getEditorMode() == EditorMode::Navigation) {
       cameraController_->onEvent(e);
+    }
+
+    // Camera controls (if not handled by keyboard or selection tool)
   }
 
   void onImGuiRender() override {
@@ -144,13 +149,13 @@ private:
       stop();
       return true;
 
-    // case KeyCode::Q:
-    //   uiManager_->setEditorMode(EditorMode::Navigation);
-    //   return true;
+    case KeyCode::Q:
+      uiManager_->setEditorMode(EditorMode::Navigation);
+      return true;
 
-    // case KeyCode::W:
-    //   uiManager_->setEditorMode(EditorMode::Selection);
-    //   return true;
+    case KeyCode::W:
+      uiManager_->setEditorMode(EditorMode::Selection);
+      return true;
 
     case KeyCode::R:
       sceneController_->resetCamera();
@@ -270,10 +275,10 @@ private:
         }
       }
 
-      // CC_INFO(
-      //     "FPS: {:.1f} | Objects: {} | Points: {} | Camera Distance: {:.2f}",
-      //     avgFps, sceneController_->getObjectCount(), totalPoints,
-      //     getCamera()->getOrbitDistance());
+      CC_INFO(
+          "FPS: {:.1f} | Objects: {} | Points: {} | Camera Distance: {:.2f}",
+          avgFps, sceneController_->getObjectCount(), totalPoints,
+          getCamera()->getOrbitDistance());
 
       accumulatedTime = 0.0;
       frameCount = 0;
