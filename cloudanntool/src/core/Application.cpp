@@ -65,9 +65,9 @@ bool Application::initialize(int width, int height) {
 
     // Create camera
     camera_ = std::make_unique<Camera>();
-    // camera_->setPosition(Eigen::Vector3f(0.0f, -5.0f, 0.0f));
+    camera_->setPosition(Eigen::Vector3f(0.0f, -5.0f, 0.0f));
     camera_->setTarget(Eigen::Vector3f(0.0f, 0.0f, 0.0f));
-    camera_->setPerspective(45.0f, static_cast<float>(width) / height, 0.1f, 100.0f);
+    camera_->setPerspective(45.0f, static_cast<float>(width) / height, 0.1f, 1000.0f);
     CC_CORE_DEBUG("Camera initialized");
 
     // Create event manager and set callback
@@ -182,6 +182,8 @@ bool Application::onWindowClose(WindowCloseEvent& e) {
 bool Application::onWindowResize(WindowResizeEvent& e) {
     CC_CORE_DEBUG("Window resized: {}x{}", e.getWidth(), e.getHeight());
     Renderer::setViewport(0, 0, e.getWidth(), e.getHeight());
+    window_->setHeight(e.getHeight());
+    window_->setWidth(e.getWidth());
     if (camera_) {
         camera_->setPerspective(camera_->getFOV(),
                                static_cast<float>(e.getWidth()) / e.getHeight(),

@@ -235,13 +235,10 @@ private:
           if (ctrlPressed) {
             // Subtractive selection (remove points)
             obj->deselectPoints(selectedIndices);
-          } else if (shiftPressed) {
+          } else  {
             // Additive selection (add points)
             obj->selectPoints(selectedIndices, true);
-          } else {
-            // Replace selection (clear and select new)
-            obj->selectPoints(selectedIndices, false);
-          }
+          } 
         }
 
         return true;

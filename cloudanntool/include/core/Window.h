@@ -23,8 +23,10 @@ public:
 
     // Getters
     GLFWwindow* getHandle() const { return window_; }
-    int getWidth() const { return width_; }
-    int getHeight() const { return height_; }
+    inline int getWidth() const { return width_; }
+    inline int getHeight() const { return height_; }
+    inline void setWidth(int width){ width_=width; }
+    inline void setHeight(int height){ height_=height; }
     float getAspectRatio() const { return static_cast<float>(width_) / height_; }
 
     // Callbacks
@@ -32,7 +34,7 @@ public:
     void setResizeCallback(ResizeCallback callback) { resizeCallback_ = callback; }
 
 private:
-    static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+    // static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
     GLFWwindow* window_;
     int width_;

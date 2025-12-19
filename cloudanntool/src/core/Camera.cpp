@@ -1,4 +1,5 @@
 #include "core/Camera.h"
+#include <Eigen/src/Core/Matrix.h>
 #include <iostream>
 #include "core/Log.h"
 #include <cmath>
@@ -12,10 +13,10 @@ namespace CloudCore {
 
 Camera::Camera()
     : position_(0.0f, 0.0f, 0.0f)
-    , front_(0.0f, 0.0f, 1.0f)
-    , up_(0.0f, 1.0f, 0.0f)
+    , front_(0.0f, 1.0f, 0.0f)
+    , up_(0.0f, 0.0f, 1.0f)
     , right_(1.0f, 0.0f, 0.0f)
-    , worldUp_(0.0f, 1.0f, 0.0f)
+    , worldUp_(0.0f, 0.0f, 1.0f)
     , yaw_(0.0f)
     , pitch_(0.0f)
     , orbitTarget_(0.0f, 0.0f, 0.0f)
@@ -24,7 +25,7 @@ Camera::Camera()
     , fov_(60.0f)
     , aspectRatio_(16.0f / 9.0f)
     , nearPlane_(0.1f)
-    , farPlane_(1000.0f)
+    , farPlane_(50.0f)
     , orthoLeft_(-1.0f)
     , orthoRight_(1.0f)
     , orthoBottom_(-1.0f)
@@ -32,10 +33,9 @@ Camera::Camera()
     , movementSpeed_(5.0f)
     , mouseSensitivity_(0.1f)
     , zoomSensitivity_(2.5f)
-    , orbitSensitivity_(0.05f)
+    , orbitSensitivity_(0.01f)
     , panSensitivity_(0.01f)
 {
-    // Note: right_ vector will be updated by updateCameraVectors()
     updateCameraVectors();
 }
 
@@ -54,8 +54,6 @@ void Camera::setTarget(const Eigen::Vector3f& target)
     Eigen::Vector3f direction = (target - position_).normalized();
 
     // Calculate yaw and pitch from the direction vector
-    // yaw is the angle in the XZ plane (horizontal rotation)
-    // pitch is the angle up/down
     yaw_ = std::atan2(direction.x(), -direction.y()) * 180.0f / M_PI;
     pitch_ = std::asin(direction.z()) * 180.0f / M_PI;
     updateCameraVectors();
@@ -115,11 +113,11 @@ void Camera::processKeyboard(CameraMovement direction, float deltaTime)
 
 void Camera::processMouseMovement(float xoffset, float yoffset, bool constrainPitch)
 {
-    // xoffset *= 0.01;
+    xoffset *= 0.01;
     yoffset *= mouseSensitivity_;
 
-    // yaw_ += xoffset;
-    // pitch_ += yoffset;
+    yaw_ += xoffset;
+    pitch_ += yoffset;
 
     if (constrainPitch) {
         pitch_ = std::clamp(pitch_, -89.0f, 89.0f);
@@ -149,53 +147,22 @@ void Camera::zoom(float amount)
 }
 
 Eigen::Matrix4f Camera::getViewProjectionMatrix() const {
-    // Create 4x4 transformation matrix
-    Eigen::Matrix4f Z_UP_TO_OPENGL = Eigen::Matrix4f::Identity();
-    
-    // Get 3x3 rotation and embed it in the 4x4 matrix
-    Eigen::Matrix3f rotation = (Eigen::AngleAxisf(-M_PI/2.0f, Eigen::Vector3f::UnitX()))
-                                .toRotationMatrix();
-    Z_UP_TO_OPENGL.block<3,3>(0,0) = rotation;
-    
-    Eigen::Matrix4f glView = getViewMatrix() * Z_UP_TO_OPENGL; 
-    Eigen::Matrix4f projection = getProjectionMatrix();
-    Eigen::Matrix4f PV = projection * glView;
-    return PV;
+    return getProjectionMatrix() * getViewMatrix();
 }
 
 Eigen::Matrix4f Camera::getViewMatrix() const
 {
-    Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
     Eigen::Vector3f f = front_.normalized();
     Eigen::Vector3f r = right_.normalized();
     Eigen::Vector3f u = up_.normalized();
-    
-    // Column-major for OpenGL: each column is a basis vector
-    // Column 0: right vector
-    view(0, 0) = r.x();
-    view(1, 0) = r.y();
-    view(2, 0) = r.z();
-    view(3, 0) = 0.0f;
-    
-    // Column 1: up vector
-    view(0, 1) = u.x();
-    view(1, 1) = u.y();
-    view(2, 1) = u.z();
-    view(3, 1) = 0.0f;
-    
-    // Column 2: front vector
-    view(0, 2) = -f.x();
-    view(1, 2) = -f.y();
-    view(2, 2) = -f.z();
-    view(3, 2) = 0.0f;
-    
-    // Column 3: translation
-    view(0, 3) = -r.dot(position_);
-    view(1, 3) = -u.dot(position_);
-    view(2, 3) = f.dot(position_);
-    view(3, 3) = 1.0f;
-    
-    return view;
+
+    Eigen::Matrix4f view_matrix;
+    view_matrix << r.x(), r.y(), r.z(), -r.dot(position_),
+                   u.x(), u.y(), u.z(), -u.dot(position_),
+                   -f.x(), -f.y(), -f.z(), f.dot(position_),
+                   0.0f, 0.0f, 0.0f, 1.0f;
+   
+    return view_matrix;
 }
 
 Eigen::Matrix4f Camera::getProjectionMatrix() const
@@ -210,8 +177,8 @@ Eigen::Matrix4f Camera::getProjectionMatrix() const
         projection(0, 0) = f / aspectRatio_;  // X scaling
         projection(1, 1) = f;                 // Y scaling
         projection(2, 2) = -(farPlane_ + nearPlane_) / (farPlane_ - nearPlane_);
-        projection(2, 3) = -(2.0f * farPlane_ * nearPlane_) / (farPlane_ - nearPlane_);
         projection(3, 2) = -1.0f;             // W = -Z (perspective divide)
+        projection(2, 3) = -(2.0f * farPlane_ * nearPlane_) / (farPlane_ - nearPlane_);
         // projection(3,3) remains 0.0f
     } else {
         // Orthographic projection matrix (column-major for OpenGL)
@@ -230,12 +197,9 @@ Eigen::Matrix4f Camera::getProjectionMatrix() const
 void Camera::updateCameraVectors()
 {
     Eigen::Vector3f front;
-    float yawRad = yaw_ * M_PI / 180.0f;
-    float pitchRad = pitch_ * M_PI / 180.0f;
-
-    front.x() = std::sin(yawRad) * std::cos(pitchRad);
-    front.y() = std::sin(pitchRad);
-    front.z() = std::cos(yawRad) * std::cos(pitchRad);
+    front.x() = std::sin(yaw_) * std::cos(pitch_);
+    front.y() = std::sin(pitch_);
+    front.z() = std::cos(yaw_) * std::cos(pitch_);
 
     front_ = front.normalized();
     right_ = front_.cross(worldUp_).normalized();
@@ -248,17 +212,11 @@ void Camera::orbitRotate(float xoffset, float yoffset)
     xoffset *= orbitSensitivity_;
     yoffset *= orbitSensitivity_;
 
-    Eigen::AngleAxisf horizontalRot(xoffset, worldUp_);
-    Eigen::Quaternionf horizontalQuat(horizontalRot);
+    orbitYaw_ += xoffset;
+    orbitPitch_ -= yoffset;
 
-     // Vertical rotation: around camera's current right axis
-    Eigen::Vector3f rightAxis = orbitRotation_ * Eigen::Vector3f::UnitX();
-    Eigen::AngleAxisf verticalRot(yoffset, rightAxis);
-    Eigen::Quaternionf verticalQuat(verticalRot);
-
-    // Apply horizontal first (world space), then vertical (local space)
-    orbitRotation_ = horizontalQuat * orbitRotation_ ;
-    orbitRotation_.normalize();
+    // Prevent flipping
+    orbitPitch_ = std::clamp(orbitPitch_, -1.55f, 1.55f);
 
     updateOrbitPosition();
 }
@@ -302,10 +260,8 @@ void Camera::frameTarget(const Eigen::Vector3f& target, float radius)
     orbitTarget_ = target;
     orbitDistance_ = radius * 2.5f;
     
-    // Default view: slightly from above and to the side (like Blender)
-    Eigen::AngleAxisf rot1(0.785f, Eigen::Vector3f::UnitZ());      // 45° around Z
-    Eigen::AngleAxisf rot2(-0.524f, Eigen::Vector3f::UnitX());     // -30° tilt
-    orbitRotation_ = Eigen::Quaternionf(rot1) * Eigen::Quaternionf(rot2);
+    orbitPitch_ = 0.785398;
+    orbitYaw_ = -0.471238898;
 
     updateOrbitPosition();
 }
@@ -313,58 +269,58 @@ void Camera::frameTarget(const Eigen::Vector3f& target, float radius)
 
 void Camera::updateOrbitPosition()
 {
-    // Start with camera looking down -Y (Blender default)
-    Eigen::Vector3f initialDirection(0.0f, -1.0f, 0.0f);
+    Eigen::Vector3f offset;
+    offset.x() = orbitDistance_ * std::cos(orbitPitch_) * std::sin(orbitYaw_);
+    offset.z() = orbitDistance_ * std::sin(orbitPitch_);
+    offset.y() = orbitDistance_ * std::cos(orbitPitch_) * std::cos(orbitYaw_);
     
-    // Apply quaternion rotation
-    Eigen::Vector3f direction = orbitRotation_ * initialDirection;
-    
-    // Position camera
-    position_ = orbitTarget_ - direction * orbitDistance_;
+    position_ = orbitTarget_ + offset;
 
-    // Update basis vectors
-    front_ = direction.normalized();
-    
-    // Always derive right from worldUp to prevent roll
-    right_ = worldUp_.cross(front_).normalized();
-    
-    // Handle degenerate case (looking straight up/down)
-    if (right_.squaredNorm() < 0.0001f) {
-        right_ = Eigen::Vector3f::UnitX();
-    }
-    
-    // Ensure orthogonal up vector
-    up_ = front_.cross(right_).normalized();
+    front_ = (orbitTarget_ - position_).normalized();
+    right_ = front_.cross(worldUp_).normalized();
+    up_    = right_.cross(front_).normalized();
 }
 
 // View presets
 void Camera::setViewFront()
 {
+    orbitYaw_ = 0.0;
+    orbitPitch_ = 0.0;
     updateOrbitPosition();
 }
 
 void Camera::setViewBack()
 {
+    orbitYaw_ = -1.5708;
+    orbitPitch_ = 0.0;
     updateOrbitPosition();
 }
 
 void Camera::setViewTop()
 {
+    orbitYaw_ = 0.0;
+    orbitPitch_ = 1.5708;
     updateOrbitPosition();
 }
 
 void Camera::setViewBottom()
 {
+    orbitYaw_ = 0.0;
+    orbitPitch_ = -1.5708;
     updateOrbitPosition();
 }
 
 void Camera::setViewLeft()
 {
+    orbitYaw_ = -1.5708;
+    orbitPitch_ = 0.0;
     updateOrbitPosition();
 }
 
 void Camera::setViewRight()
 {
+    orbitYaw_ = 1.5708;
+    orbitPitch_ = 0.0;
     updateOrbitPosition();
 }
 

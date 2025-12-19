@@ -89,7 +89,9 @@ private:
 
     // Orbit camera attributes
     Eigen::Vector3f orbitTarget_;
-    Eigen::Quaternionf orbitRotation_;  
+    // Eigen::Quaternionf orbitRotation_;  
+    float orbitYaw_{0.0};
+    float orbitPitch_{0.0};
     float orbitDistance_;
 
     // Projection parameters

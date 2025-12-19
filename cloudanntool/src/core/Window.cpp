@@ -88,16 +88,17 @@ void Window::pollEvents()
     glfwPollEvents();
 }
 
-void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-    Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-    if (win) {
-        win->width_ = width;
-        win->height_ = height;
-        if (win->resizeCallback_) {
-            win->resizeCallback_(width, height);
-        }
-    }
-}
+// void Window::framebufferSizeCallback(GLFWwindow* window, int width, int height)
+// {
+//     Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+//     if (win) {
+//         win->width_ = width;
+//         win->height_ = height;
+//         if (win->resizeCallback_) {
+//             win->resizeCallback_(width, height);
+//         }
+//     }
+// }
 
 } // namespace CloudCore

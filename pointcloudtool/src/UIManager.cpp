@@ -772,8 +772,9 @@ void UIManager::renderToolboxPanel()
     ImGui::Spacing();
     ImGui::Text("Controls:");
     ImGui::BulletText("Click and drag to select");
-    ImGui::BulletText("Hold Shift to add points");
+    // ImGui::BulletText("Hold Shift to add points");
     ImGui::BulletText("Hold Ctrl to remove points");
+    ImGui::BulletText("Press clear to reset selection");
 
     ImGui::Spacing();
 
