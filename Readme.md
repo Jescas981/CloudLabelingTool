@@ -38,6 +38,9 @@ A lightweight engine for rendering and visualizing point clouds with customizabl
 ## Preview
 ![Point Cloud Rendering](docs/Photo.png)  
 
+## Tutorial
+[![Point Cloud Tool](https://img.youtube.com/vi/KtLUAVpZ7DA/hqdefault.jpg)](https://youtu.be/KtLUAVpZ7DA)
+
 ## Supported Color Modes
 
 * **Gradient** – colors based on position along an axis
@@ -45,14 +48,12 @@ A lightweight engine for rendering and visualizing point clouds with customizabl
 * **RGB** – uses point-specific RGB values
 * **Flat Color** – single color for all points
 
-## Known Issues / TODO
-There are many issues to fix, but I will try to finish this in a productive version at least
-
-* Fix coordinate system: currently not fully Z-up [DONE]
-* Implement additional camera controls (orbit, pan, zoom) [TODO]
+##  TODO
+* Implement additional camera controls (orbit, pan, zoom)
 * Fix labeling system
 * Add point cloud editing and filtering
-* Enable GPU-level optimizations for large point clouds
+* Enable GPU-level optimizations for large point clouds [Priority]
+* Add focus to select area [Priority]
 
 ## License
 
