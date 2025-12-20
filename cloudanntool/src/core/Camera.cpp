@@ -6,7 +6,7 @@
 #include <algorithm>
 
 #ifndef M_PI
-#define M_PI 3.14159265358979323846
+#define M_PI 3.14159265358979323846f
 #endif
 
 namespace CloudCore {
@@ -65,24 +65,24 @@ void Camera::setUp(const Eigen::Vector3f& up)
     updateCameraVectors();
 }
 
-void Camera::setPerspective(float fov, float aspect, float near, float far)
+void Camera::setPerspective(float fov, float aspect, float nearPlane, float farPlane)
 {
     isPerspective_ = true;
     fov_ = fov;
     aspectRatio_ = aspect;
-    nearPlane_ = near;
-    farPlane_ = far;
+    nearPlane_ = nearPlane;
+    farPlane_ = farPlane;
 }
 
-void Camera::setOrthographic(float left, float right, float bottom, float top, float near, float far)
+void Camera::setOrthographic(float left, float right, float bottom, float top, float nearPlane, float farPlane)
 {
     isPerspective_ = false;
     orthoLeft_ = left;
     orthoRight_ = right;
     orthoBottom_ = bottom;
     orthoTop_ = top;
-    nearPlane_ = near;
-    farPlane_ = far;
+    nearPlane_ = nearPlane;
+    farPlane_ = farPlane;
 }
 
 void Camera::processKeyboard(CameraMovement direction, float deltaTime)
@@ -113,7 +113,7 @@ void Camera::processKeyboard(CameraMovement direction, float deltaTime)
 
 void Camera::processMouseMovement(float xoffset, float yoffset, bool constrainPitch)
 {
-    xoffset *= 0.01;
+    xoffset *= mouseSensitivity_;
     yoffset *= mouseSensitivity_;
 
     yaw_ += xoffset;
@@ -260,8 +260,8 @@ void Camera::frameTarget(const Eigen::Vector3f& target, float radius)
     orbitTarget_ = target;
     orbitDistance_ = radius * 2.5f;
     
-    orbitPitch_ = 0.785398;
-    orbitYaw_ = -0.471238898;
+    orbitPitch_ = 0.7853f;
+    orbitYaw_ = -0.4712f;
 
     updateOrbitPosition();
 }
@@ -284,43 +284,43 @@ void Camera::updateOrbitPosition()
 // View presets
 void Camera::setViewFront()
 {
-    orbitYaw_ = 0.0;
-    orbitPitch_ = 0.0;
+    orbitYaw_ = 0.0f;
+    orbitPitch_ = 0.0f;
     updateOrbitPosition();
 }
 
 void Camera::setViewBack()
 {
-    orbitYaw_ = -1.5708;
-    orbitPitch_ = 0.0;
+    orbitYaw_ = -1.5708f;
+    orbitPitch_ = 0.0f;
     updateOrbitPosition();
 }
 
 void Camera::setViewTop()
 {
-    orbitYaw_ = 0.0;
-    orbitPitch_ = 1.5708;
+    orbitYaw_ = 0.0f;
+    orbitPitch_ = 1.5708f;
     updateOrbitPosition();
 }
 
 void Camera::setViewBottom()
 {
-    orbitYaw_ = 0.0;
-    orbitPitch_ = -1.5708;
+    orbitYaw_ = 0.0f;
+    orbitPitch_ = -1.5708f;
     updateOrbitPosition();
 }
 
 void Camera::setViewLeft()
 {
-    orbitYaw_ = -1.5708;
-    orbitPitch_ = 0.0;
+    orbitYaw_ = -1.5708f;
+    orbitPitch_ = 0.0f;
     updateOrbitPosition();
 }
 
 void Camera::setViewRight()
 {
-    orbitYaw_ = 1.5708;
-    orbitPitch_ = 0.0;
+    orbitYaw_ = 1.5708f;
+    orbitPitch_ = 0.0f;
     updateOrbitPosition();
 }
 
