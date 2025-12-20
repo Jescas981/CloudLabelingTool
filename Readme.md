@@ -55,6 +55,10 @@ A lightweight engine for rendering and visualizing point clouds with customizabl
 * Enable GPU-level optimizations for large point clouds [Priority]
 * Add focus to select area [Priority]
 
+## DONE
+* Fix coordinate system [Z up, Y forward]
+* PLY save/load files
+
 ## License
 
 MIT License
