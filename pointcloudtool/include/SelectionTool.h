@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/Camera.h"
-#include "scene/PointCloud.h"
+#include <Perceptral/core/Camera.h>
+#include <Perceptral/scene/PointCloud.h>
 #include <Eigen/Dense>
 #include <vector>
 
@@ -43,8 +43,8 @@ public:
 
     // Perform selection on a point cloud
     std::vector<size_t> selectPoints(
-        std::shared_ptr<CloudCore::PointCloud> pointCloud,
-        CloudCore::Camera* camera,
+        std::shared_ptr<Perceptral::PointCloud> pointCloud,
+        Perceptral::Camera* camera,
         int windowWidth,
         int windowHeight,
         bool additive = false  // If true, add to existing selection
@@ -72,7 +72,7 @@ private:
     // Helper: Project 3D point to screen space
     Eigen::Vector2f projectToScreen(
         const Eigen::Vector3f& worldPos,
-        CloudCore::Camera* camera,
+        Perceptral::Camera* camera,
         int windowWidth,
         int windowHeight
     ) const;

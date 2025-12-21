@@ -1,11 +1,11 @@
-#include "core/Application.h"
-#include "core/DeltaTime.h"
-#include "core/Event.h"
-#include "core/KeyCodes.h"
-#include "core/Log.h"
-#include "core/layers/RenderLayer.h"
-#include "io/ImageExporter.h"
-#include "scene/Scene.h"
+#include <Perceptral/core/Application.h>
+#include <Perceptral/core/DeltaTime.h>
+#include <Perceptral/core/Event.h>
+#include <Perceptral/core/KeyCodes.h>
+#include <Perceptral/core/Log.h>
+#include <Perceptral/core/layers/RenderLayer.h>
+#include <Perceptral/io/ImageExporter.h>
+#include <Perceptral/scene/Scene.h>
 
 #include "CameraController.h"
 #include "SceneController.h"
@@ -14,7 +14,7 @@
 #include <memory>
 #include <nfd.h>
 
-using namespace CloudCore;
+using namespace Perceptral;
 using namespace PointCloudTool;
 
 /**
@@ -25,8 +25,8 @@ public:
   PointCloudToolScene() : Scene("PointCloudToolScene") {}
 
   void onCreate() override {
-    CC_INFO("Creating PointCloudToolScene...");
-    CC_INFO("Scene created successfully!");
+    PC_INFO("Creating PointCloudToolScene...");
+    PC_INFO("Scene created successfully!");
   }
 };
 
@@ -45,16 +45,16 @@ public:
   PointCloudToolApp() : Application("Point Cloud Tool") {}
 
   void onInit() override {
-    CC_INFO("=== Point Cloud Tool ===");
-    CC_INFO("Initializing application...");
+    PC_INFO("=== Point Cloud Tool ===");
+    PC_INFO("Initializing application...");
 
     // Initialize NFD (must be after window creation)
     if (NFD_Init() != NFD_OKAY) {
-      CC_CORE_ERROR("Failed to initialize NFD: {}", NFD_GetError());
+      PC_CORE_ERROR("Failed to initialize NFD: {}", NFD_GetError());
       stop();
       return;
     }
-    CC_INFO("NFD initialized successfully");
+    PC_INFO("NFD initialized successfully");
 
     // Create scene
     auto scene = std::make_shared<PointCloudToolScene>();
@@ -76,13 +76,13 @@ public:
     uiManager_->setExitCallback([this]() { this->stop(); });
 
     printControls();
-    CC_INFO("Point Cloud Tool initialized successfully\n");
+    PC_INFO("Point Cloud Tool initialized successfully\n");
   }
 
   void onShutdown() override {
-    CC_INFO("Shutting down Point Cloud Tool...");
+    PC_INFO("Shutting down Point Cloud Tool...");
     NFD_Quit();
-    CC_INFO("NFD shutdown complete");
+    PC_INFO("NFD shutdown complete");
   }
 
   void onUpdate(DeltaTime deltaTime) override {
@@ -146,7 +146,7 @@ private:
   bool onKeyPressed(KeyPressedEvent &event) {
     switch (event.getKeyCode()) {
     case KeyCode::Escape:
-      CC_INFO("Exiting application...");
+      PC_INFO("Exiting application...");
       stop();
       return true;
 
@@ -160,17 +160,17 @@ private:
 
     case KeyCode::R:
       sceneController_->resetCamera();
-      CC_INFO("Camera reset");
+      PC_INFO("Camera reset");
       return true;
 
     case KeyCode::V:
       verboseLogging_ = !verboseLogging_;
       if (verboseLogging_) {
         Log::setDebug();
-        CC_INFO("Verbose logging enabled");
+        PC_INFO("Verbose logging enabled");
       } else {
         Log::setInfo();
-        CC_INFO("Verbose logging disabled");
+        PC_INFO("Verbose logging disabled");
       }
       return true;
 
@@ -273,7 +273,7 @@ private:
         }
       }
 
-      CC_INFO(
+      PC_INFO(
           "FPS: {:.1f} | Objects: {} | Points: {} | Camera Distance: {:.2f}",
           avgFps, sceneController_->getObjectCount(), totalPoints,
           getCamera()->getOrbitDistance());
@@ -284,27 +284,27 @@ private:
   }
 
   void printControls() {
-    CC_INFO("\nEditor Modes:");
-    CC_INFO("  Q:                     Navigation mode (camera control)");
-    CC_INFO("  W:                     Selection mode (point selection)");
-    CC_INFO("\nCamera Controls (Navigation Mode):");
-    CC_INFO("  Left Mouse Drag:       Rotate around target");
-    CC_INFO("  Middle Mouse Drag:     Pan camera");
-    CC_INFO("  Shift + Left Drag:     Pan camera");
-    CC_INFO("  Right Mouse Drag:      Zoom in/out");
-    CC_INFO("  Ctrl + Left Drag:      Zoom in/out");
-    CC_INFO("  Mouse Wheel:           Zoom in/out");
-    CC_INFO("  R:                     Reset camera view");
-    CC_INFO("\nSelection Controls (Selection Mode):");
-    CC_INFO("  Left Click + Drag:     Rectangle selection (replace)");
-    CC_INFO("  Shift + Select:        Additive selection (add points)");
-    CC_INFO("  Ctrl + Select:         Subtractive selection (remove points)");
-    CC_INFO("  Ctrl + D:              Clear selection");
-    CC_INFO("\nApplication:");
-    CC_INFO("  F11:                   Screenshot");
-    CC_INFO("  F12:                   Start/Stop recording");
-    CC_INFO("  V:                     Toggle verbose logging");
-    CC_INFO("  ESC:                   Exit");
+    PC_INFO("\nEditor Modes:");
+    PC_INFO("  Q:                     Navigation mode (camera control)");
+    PC_INFO("  W:                     Selection mode (point selection)");
+    PC_INFO("\nCamera Controls (Navigation Mode):");
+    PC_INFO("  Left Mouse Drag:       Rotate around target");
+    PC_INFO("  Middle Mouse Drag:     Pan camera");
+    PC_INFO("  Shift + Left Drag:     Pan camera");
+    PC_INFO("  Right Mouse Drag:      Zoom in/out");
+    PC_INFO("  Ctrl + Left Drag:      Zoom in/out");
+    PC_INFO("  Mouse Wheel:           Zoom in/out");
+    PC_INFO("  R:                     Reset camera view");
+    PC_INFO("\nSelection Controls (Selection Mode):");
+    PC_INFO("  Left Click + Drag:     Rectangle selection (replace)");
+    PC_INFO("  Shift + Select:        Additive selection (add points)");
+    PC_INFO("  Ctrl + Select:         Subtractive selection (remove points)");
+    PC_INFO("  Ctrl + D:              Clear selection");
+    PC_INFO("\nApplication:");
+    PC_INFO("  F11:                   Screenshot");
+    PC_INFO("  F12:                   Start/Stop recording");
+    PC_INFO("  V:                     Toggle verbose logging");
+    PC_INFO("  ESC:                   Exit");
   }
 
   // Controllers

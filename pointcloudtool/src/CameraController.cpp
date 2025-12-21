@@ -1,10 +1,10 @@
 #include "CameraController.h"
-#include "core/Log.h"
-#include "core/KeyCodes.h"
+#include <Perceptral/core/Log.h>
+#include <Perceptral/core/KeyCodes.h>
 
 namespace PointCloudTool {
 
-CameraController::CameraController(CloudCore::Camera* camera)
+CameraController::CameraController(Perceptral::Camera* camera)
     : camera_(camera)
 {
 }
@@ -13,10 +13,10 @@ void CameraController::toggleMode()
 {
     if (mode_ == CameraMode::Orbit) {
         mode_ = CameraMode::FPS;
-        CC_CORE_INFO("Switched to FPS camera mode");
+        PC_CORE_INFO("Switched to FPS camera mode");
     } else {
         mode_ = CameraMode::Orbit;
-        CC_CORE_INFO("Switched to Orbit camera mode");
+        PC_CORE_INFO("Switched to Orbit camera mode");
     }
 }
 
@@ -27,9 +27,9 @@ void CameraController::onUpdate(float deltaTime)
     }
 
     // FPS keyboard movement
-    using CloudCore::KeyCode;
-    using CloudCore::Input;
-    using CloudCore::CameraMovement;
+    using Perceptral::KeyCode;
+    using Perceptral::Input;
+    using Perceptral::CameraMovement;
 
     if (Input::isKeyPressed(KeyCode::W)) {
         camera_->processKeyboard(CameraMovement::Forward, deltaTime);
@@ -51,27 +51,27 @@ void CameraController::onUpdate(float deltaTime)
     }
 }
 
-bool CameraController::onEvent(CloudCore::Event& e)
+bool CameraController::onEvent(Perceptral::Event& e)
 {
-    CloudCore::EventDispatcher dispatcher(e);
+    Perceptral::EventDispatcher dispatcher(e);
 
-    dispatcher.dispatch<CloudCore::MouseButtonPressedEvent>(
-        [this](CloudCore::MouseButtonPressedEvent& event) {
+    dispatcher.dispatch<Perceptral::MouseButtonPressedEvent>(
+        [this](Perceptral::MouseButtonPressedEvent& event) {
             return onMouseButtonPressed(event);
         });
 
-    dispatcher.dispatch<CloudCore::MouseButtonReleasedEvent>(
-        [this](CloudCore::MouseButtonReleasedEvent& event) {
+    dispatcher.dispatch<Perceptral::MouseButtonReleasedEvent>(
+        [this](Perceptral::MouseButtonReleasedEvent& event) {
             return onMouseButtonReleased(event);
         });
 
-    dispatcher.dispatch<CloudCore::MouseMovedEvent>(
-        [this](CloudCore::MouseMovedEvent& event) {
+    dispatcher.dispatch<Perceptral::MouseMovedEvent>(
+        [this](Perceptral::MouseMovedEvent& event) {
             return onMouseMoved(event);
         });
 
-    dispatcher.dispatch<CloudCore::MouseScrolledEvent>(
-        [this](CloudCore::MouseScrolledEvent& event) {
+    dispatcher.dispatch<Perceptral::MouseScrolledEvent>(
+        [this](Perceptral::MouseScrolledEvent& event) {
             return onMouseScrolled(event);
         });
 
@@ -83,50 +83,50 @@ bool CameraController::isCapturingInput() const
     return leftMousePressed_ || middleMousePressed_ || rightMousePressed_;
 }
 
-bool CameraController::onMouseButtonPressed(CloudCore::MouseButtonPressedEvent& e)
+bool CameraController::onMouseButtonPressed(Perceptral::MouseButtonPressedEvent& e)
 {
-    if (e.getMouseButton() == CloudCore::MouseButton::Left) {
+    if (e.getMouseButton() == Perceptral::MouseButton::Left) {
         leftMousePressed_ = true;
         firstMouse_ = true;
-        CC_CORE_TRACE("Left mouse pressed");
+        PC_CORE_TRACE("Left mouse pressed");
         return true;
     }
-    if (e.getMouseButton() == CloudCore::MouseButton::Middle) {
+    if (e.getMouseButton() == Perceptral::MouseButton::Middle) {
         middleMousePressed_ = true;
         firstMouse_ = true;
-        CC_CORE_TRACE("Middle mouse pressed - pan mode");
+        PC_CORE_TRACE("Middle mouse pressed - pan mode");
         return true;
     }
-    if (e.getMouseButton() == CloudCore::MouseButton::Right) {
+    if (e.getMouseButton() == Perceptral::MouseButton::Right) {
         rightMousePressed_ = true;
         firstMouse_ = true;
-        CC_CORE_TRACE("Right mouse pressed");
+        PC_CORE_TRACE("Right mouse pressed");
         return true;
     }
     return false;
 }
 
-bool CameraController::onMouseButtonReleased(CloudCore::MouseButtonReleasedEvent& e)
+bool CameraController::onMouseButtonReleased(Perceptral::MouseButtonReleasedEvent& e)
 {
-    if (e.getMouseButton() == CloudCore::MouseButton::Left) {
+    if (e.getMouseButton() == Perceptral::MouseButton::Left) {
         leftMousePressed_ = false;
-        CC_CORE_TRACE("Left mouse released");
+        PC_CORE_TRACE("Left mouse released");
         return true;
     }
-    if (e.getMouseButton() == CloudCore::MouseButton::Middle) {
+    if (e.getMouseButton() == Perceptral::MouseButton::Middle) {
         middleMousePressed_ = false;
-        CC_CORE_TRACE("Middle mouse released");
+        PC_CORE_TRACE("Middle mouse released");
         return true;
     }
-    if (e.getMouseButton() == CloudCore::MouseButton::Right) {
+    if (e.getMouseButton() == Perceptral::MouseButton::Right) {
         rightMousePressed_ = false;
-        CC_CORE_TRACE("Right mouse released");
+        PC_CORE_TRACE("Right mouse released");
         return true;
     }
     return false;
 }
 
-bool CameraController::onMouseMoved(CloudCore::MouseMovedEvent& e)
+bool CameraController::onMouseMoved(Perceptral::MouseMovedEvent& e)
 {
     float xpos = e.getX();
     float ypos = e.getY();
@@ -141,27 +141,27 @@ bool CameraController::onMouseMoved(CloudCore::MouseMovedEvent& e)
     float xoffset = xpos - lastMouseX_;
     float yoffset = lastMouseY_ - ypos; // Reversed for natural rotation
 
-    bool shiftPressed = CloudCore::Input::isKeyPressed(CloudCore::KeyCode::LeftShift) ||
-                       CloudCore::Input::isKeyPressed(CloudCore::KeyCode::RightShift);
-    bool ctrlPressed = CloudCore::Input::isKeyPressed(CloudCore::KeyCode::LeftControl) ||
-                      CloudCore::Input::isKeyPressed(CloudCore::KeyCode::RightControl);
+    bool shiftPressed = Perceptral::Input::isKeyPressed(Perceptral::KeyCode::LeftShift) ||
+                       Perceptral::Input::isKeyPressed(Perceptral::KeyCode::RightShift);
+    bool ctrlPressed = Perceptral::Input::isKeyPressed(Perceptral::KeyCode::LeftControl) ||
+                      Perceptral::Input::isKeyPressed(Perceptral::KeyCode::RightControl);
 
     if (mode_ == CameraMode::Orbit) {
         // Orbit mode controls
         // Zoom mode: right mouse or ctrl+left mouse
         if (rightMousePressed_ || (leftMousePressed_ && ctrlPressed)) {
             camera_->orbitZoom(-yoffset * 0.1f);
-            CC_CORE_TRACE("Zooming: offset({:.2f})", yoffset);
+            PC_CORE_TRACE("Zooming: offset({:.2f})", yoffset);
         }
         // Pan mode: middle mouse or shift+left mouse
         else if (middleMousePressed_ || (leftMousePressed_ && shiftPressed)) {
             camera_->orbitPan(xoffset, yoffset);
-            CC_CORE_TRACE("Panning: offset({:.2f}, {:.2f})", xoffset, yoffset);
+            PC_CORE_TRACE("Panning: offset({:.2f}, {:.2f})", xoffset, yoffset);
         }
         // Rotate mode: left mouse only (no modifiers)
         else if (leftMousePressed_) {
             camera_->orbitRotate(xoffset, yoffset);
-            CC_CORE_TRACE("Rotating: offset({:.2f}, {:.2f})", xoffset, yoffset);
+            PC_CORE_TRACE("Rotating: offset({:.2f}, {:.2f})", xoffset, yoffset);
         }
     } else {
         // FPS mode controls
@@ -176,15 +176,15 @@ bool CameraController::onMouseMoved(CloudCore::MouseMovedEvent& e)
     return leftMousePressed_ || middleMousePressed_ || rightMousePressed_;
 }
 
-bool CameraController::onMouseScrolled(CloudCore::MouseScrolledEvent& e)
+bool CameraController::onMouseScrolled(Perceptral::MouseScrolledEvent& e)
 {
     if (mode_ == CameraMode::Orbit) {
         camera_->orbitZoom(e.getYOffset());
-        CC_CORE_TRACE("Orbit Zoom: {:.2f}, distance: {:.2f}",
+        PC_CORE_TRACE("Orbit Zoom: {:.2f}, distance: {:.2f}",
                      e.getYOffset(), camera_->getOrbitDistance());
     } else {
         camera_->processMouseScroll(e.getYOffset());
-        CC_CORE_TRACE("FPS Zoom (FOV): {:.2f}", e.getYOffset());
+        PC_CORE_TRACE("FPS Zoom (FOV): {:.2f}", e.getYOffset());
     }
     return true;
 }

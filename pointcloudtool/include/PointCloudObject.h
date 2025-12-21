@@ -1,9 +1,9 @@
 #pragma once
 
-#include "scene/Entity.h"
-#include "scene/Components.h"
-#include "scene/PointCloud.h"
-#include "core/DeltaTime.h"
+#include <Perceptral/scene/Entity.h>
+#include <Perceptral/scene/Components.h>
+#include <Perceptral/scene/PointCloud.h>
+#include <Perceptral/core/DeltaTime.h>
 #include <memory>
 #include <string>
 
@@ -21,19 +21,19 @@ namespace PointCloudTool {
  */
 class PointCloudObject {
 public:
-    PointCloudObject(const std::string& name, std::shared_ptr<CloudCore::PointCloud> pointCloud);
+    PointCloudObject(const std::string& name, std::shared_ptr<Perceptral::PointCloud> pointCloud);
     ~PointCloudObject() = default;
 
     // Lifecycle methods
-    void onCreate(CloudCore::Entity entity);
-    void onUpdate(CloudCore::DeltaTime deltaTime);
+    void onCreate(Perceptral::Entity entity);
+    void onUpdate(Perceptral::DeltaTime deltaTime);
     void onDestroy();
 
     // Getters
     const std::string& getName() const { return name_; }
-    CloudCore::Entity getEntity() const { return entity_; }
-    std::shared_ptr<CloudCore::PointCloud> getPointCloud() const { return pointCloud_; }
-    CloudCore::PointCloudComponent* getComponent();
+    Perceptral::Entity getEntity() const { return entity_; }
+    std::shared_ptr<Perceptral::PointCloud> getPointCloud() const { return pointCloud_; }
+    Perceptral::PointCloudComponent* getComponent();
 
     bool isVisible() const { return visible_; }
     bool isSelected() const { return selected_; }
@@ -41,7 +41,7 @@ public:
     // Setters
     void setVisible(bool visible);
     void setSelected(bool selected);
-    void setColorMode(CloudCore::PointCloudColorMode mode);
+    void setColorMode(Perceptral::PointCloudColorMode mode);
     void setPointSize(float size);
     void setSingleColor(const Eigen::Vector3f& color);
     void setSelectionColor(const Eigen::Vector3f& color);
@@ -69,7 +69,7 @@ public:
     // Label management
     void assignLabelToSelected(uint8_t labelId, bool overwrite = true);
     void initializeLabels();
-    std::shared_ptr<CloudCore::LabelDefinition> getLabelDefinition();
+    std::shared_ptr<Perceptral::LabelDefinition> getLabelDefinition();
 
     // Visibility management
     void hideLabel(uint8_t labelId);
@@ -81,8 +81,8 @@ public:
 
 private:
     std::string name_;
-    std::shared_ptr<CloudCore::PointCloud> pointCloud_;
-    CloudCore::Entity entity_;
+    std::shared_ptr<Perceptral::PointCloud> pointCloud_;
+    Perceptral::Entity entity_;
 
     bool visible_ = true;
     bool selected_ = false;

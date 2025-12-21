@@ -1,23 +1,23 @@
 #include "SceneController.h"
-#include "core/Log.h"
-#include "io/PLYLoader.h"
-#include "io/PointCloudExporter.h"
+#include <Perceptral/core/Log.h>
+#include <Perceptral/io/PLYLoader.h>
+#include <Perceptral/io/PointCloudExporter.h>
 #include <filesystem>
 
 namespace PointCloudTool {
 
-SceneController::SceneController(std::shared_ptr<CloudCore::Scene> scene, CloudCore::Camera* camera)
+SceneController::SceneController(std::shared_ptr<Perceptral::Scene> scene, Perceptral::Camera* camera)
     : scene_(scene)
     , camera_(camera)
 {
-    CC_CORE_INFO("SceneController initialized");
+    PC_INFO("SceneController initialized");
 }
 
-PointCloudObject* SceneController::addPointCloudObject(const std::string& name, std::shared_ptr<CloudCore::PointCloud> pointCloud)
+PointCloudObject* SceneController::addPointCloudObject(const std::string& name, std::shared_ptr<Perceptral::PointCloud> pointCloud)
 {
     // Check if object with this name already exists
     if (objectMap_.find(name) != objectMap_.end()) {
-        CC_CORE_WARN("Object with name '{}' already exists, skipping", name);
+        PC_WARN("Object with name '{}' already exists, skipping", name);
         return nullptr;
     }
 
@@ -36,7 +36,7 @@ PointCloudObject* SceneController::addPointCloudObject(const std::string& name, 
     objectMap_[name] = objectPtr;
     objects_.push_back(std::move(object));
 
-    CC_CORE_INFO("Added point cloud object '{}' with {} points", name, pointCloud->size());
+    PC_CORE_INFO("Added point cloud object '{}' with {} points", name, pointCloud->size());
 
     return objectPtr;
 }
@@ -45,7 +45,7 @@ void SceneController::removePointCloudObject(const std::string& name)
 {
     auto it = objectMap_.find(name);
     if (it == objectMap_.end()) {
-        CC_CORE_WARN("Object '{}' not found", name);
+        PC_WARN("Object '{}' not found", name);
         return;
     }
 
@@ -64,7 +64,7 @@ void SceneController::removePointCloudObject(const std::string& name)
     // Remove from map
     objectMap_.erase(it);
 
-    CC_CORE_INFO("Removed point cloud object '{}'", name);
+    PC_CORE_INFO("Removed point cloud object '{}'", name);
 }
 
 void SceneController::removeAllObjects()
@@ -74,7 +74,7 @@ void SceneController::removeAllObjects()
     }
     objects_.clear();
     objectMap_.clear();
-    CC_CORE_INFO("Removed all objects from scene");
+    PC_CORE_INFO("Removed all objects from scene");
 }
 
 PointCloudObject* SceneController::getObject(const std::string& name)
@@ -95,7 +95,7 @@ void SceneController::frameCamera(const std::string& objectName)
 {
     auto* object = getObject(objectName);
     if (!object) {
-        CC_CORE_WARN("Cannot frame camera: object '{}' not found", objectName);
+        PC_WARN("Cannot frame camera: object '{}' not found", objectName);
         return;
     }
 
@@ -103,13 +103,13 @@ void SceneController::frameCamera(const std::string& objectName)
     float radius = object->getBoundingSphereRadius();
 
     camera_->frameTarget(center, radius);
-    CC_CORE_INFO("Camera framed on object '{}'", objectName);
+    PC_CORE_INFO("Camera framed on object '{}'", objectName);
 }
 
 void SceneController::frameCameraAll()
 {
     if (objects_.empty()) {
-        CC_CORE_WARN("No objects to frame camera on");
+        PC_WARN("No objects to frame camera on");
         return;
     }
 
@@ -130,7 +130,7 @@ void SceneController::frameCameraAll()
     float radius = (globalMax - center).norm();
 
     camera_->frameTarget(center, radius);
-    CC_CORE_INFO("Camera framed on all {} objects", objects_.size());
+    PC_CORE_INFO("Camera framed on all {} objects", objects_.size());
 }
 
 void SceneController::resetCamera()
@@ -142,7 +142,7 @@ void SceneController::resetCamera()
     }
 }
 
-void SceneController::update(CloudCore::DeltaTime deltaTime)
+void SceneController::update(Perceptral::DeltaTime deltaTime)
 {
     // Update all objects
     for (auto& object : objects_) {
@@ -152,7 +152,7 @@ void SceneController::update(CloudCore::DeltaTime deltaTime)
 
 bool SceneController::loadPointCloudFromFile(const std::string& filepath)
 {
-    std::shared_ptr<CloudCore::PointCloud> pointCloud;
+    std::shared_ptr<Perceptral::PointCloud> pointCloud;
 
     // Detect file type by extension
     std::filesystem::path path(filepath);
@@ -161,17 +161,17 @@ bool SceneController::loadPointCloudFromFile(const std::string& filepath)
     // Convert extension to lowercase for case-insensitive comparison
     std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
-    CC_CORE_INFO("Loading point cloud from: {}", filepath);
+    PC_CORE_INFO("Loading point cloud from: {}", filepath);
 
     if (extension == ".ply") {
-        pointCloud = CloudCore::PLYLoader::load(filepath);
+        pointCloud = Perceptral::PLYLoader::load(filepath);
     } else {
-        CC_CORE_ERROR("Unsupported file format: {}", extension);
+        PC_CORE_ERROR("Unsupported file format: {}", extension);
         return false;
     }
 
     if (!pointCloud || pointCloud->empty()) {
-        CC_CORE_ERROR("Failed to load point cloud or point cloud is empty");
+        PC_CORE_ERROR("Failed to load point cloud or point cloud is empty");
         return false;
     }
 
@@ -181,14 +181,14 @@ bool SceneController::loadPointCloudFromFile(const std::string& filepath)
     // Add loaded point cloud to scene
     auto* object = addPointCloudObject(name, pointCloud);
     if (!object) {
-        CC_CORE_ERROR("Failed to add point cloud object to scene");
+        PC_CORE_ERROR("Failed to add point cloud object to scene");
         return false;
     }
 
     // Frame camera on newly loaded object
     frameCamera(name);
 
-    CC_CORE_INFO("Successfully loaded point cloud '{}' with {} points", name, pointCloud->size());
+    PC_CORE_INFO("Successfully loaded point cloud '{}' with {} points", name, pointCloud->size());
     return true;
 }
 
@@ -197,13 +197,13 @@ bool SceneController::savePointCloudToFile(const std::string& objectName, const 
     // Find the object
     auto* object = getObject(objectName);
     if (!object) {
-        CC_CORE_ERROR("Cannot save: object '{}' not found", objectName);
+        PC_CORE_ERROR("Cannot save: object '{}' not found", objectName);
         return false;
     }
 
     auto pointCloud = object->getPointCloud();
     if (!pointCloud || pointCloud->empty()) {
-        CC_CORE_ERROR("Cannot save: point cloud is empty");
+        PC_CORE_ERROR("Cannot save: point cloud is empty");
         return false;
     }
 
@@ -214,35 +214,35 @@ bool SceneController::savePointCloudToFile(const std::string& objectName, const 
     if (comp && !comp->labels.empty()) {
         // Ensure label count matches point count
         if (comp->labels.size() != cloud->points.size()) {
-            CC_ERROR("Label count ({}) doesn't match point count ({})", 
+            PC_ERROR("Label count ({}) doesn't match point count ({})", 
                             comp->labels.size(), cloud->points.size());
         } else {
             // Assign labels to each point
             for (size_t i = 0; i < cloud->points.size(); ++i) {
                 cloud->points[i].label = comp->labels[i];
             }
-            CC_ERROR("Assigned {} labels to point cloud", comp->labels.size());
+            PC_ERROR("Assigned {} labels to point cloud", comp->labels.size());
         }
     }
 
     // =
 
-    CC_CORE_INFO("Saving point cloud '{}' to: {} (format: {})", objectName, filepath, format);
+    PC_CORE_INFO("Saving point cloud '{}' to: {} (format: {})", objectName, filepath, format);
 
     bool success = false;
     if (format == "ply") {
-        success = CloudCore::PLYLoader::save(filepath, *pointCloud, true);
+        success = Perceptral::PLYLoader::save(filepath, *pointCloud, true);
     } else if (format == "ply_ascii") {
-        success = CloudCore::PLYLoader::save(filepath, *pointCloud, false);
+        success = Perceptral::PLYLoader::save(filepath, *pointCloud, false);
     } else {
-        CC_CORE_ERROR("Unsupported save format: {}", format);
+        PC_CORE_ERROR("Unsupported save format: {}", format);
         return false;
     }
 
     if (success) {
-        CC_CORE_INFO("Successfully saved point cloud to '{}'", filepath);
+        PC_CORE_INFO("Successfully saved point cloud to '{}'", filepath);
     } else {
-        CC_CORE_ERROR("Failed to save point cloud to '{}'", filepath);
+        PC_CORE_ERROR("Failed to save point cloud to '{}'", filepath);
     }
 
     return success;

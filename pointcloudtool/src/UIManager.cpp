@@ -1,6 +1,6 @@
 #include "UIManager.h"
-#include "core/Log.h"
-#include "io/ImageExporter.h"
+#include <Perceptral/core/Log.h>
+#include <Perceptral/io/ImageExporter.h>
 #include <imgui.h>
 #include <nfd.h>
 #include <chrono>
@@ -12,7 +12,7 @@ namespace PointCloudTool {
 UIManager::UIManager(SceneController* sceneController)
     : sceneController_(sceneController)
 {
-    CC_CORE_INFO("UIManager initialized");
+    PC_CORE_INFO("UIManager initialized");
 }
 
 void UIManager::render(int windowWidth, int windowHeight)
@@ -67,7 +67,7 @@ void UIManager::setEditorMode(EditorMode mode)
     if (mode == EditorMode::Navigation) {
         selectionTool_.cancelSelection();
     }
-    CC_CORE_INFO("Editor mode changed to: {}",
+    PC_CORE_INFO("Editor mode changed to: {}",
                  mode == EditorMode::Navigation ? "Navigation" : "Selection");
 }
 
@@ -94,17 +94,17 @@ void UIManager::renderFileMenu()
             nfdresult_t result = NFD_OpenDialog(&outPath, filterItem, 1, nullptr);
 
             if (result == NFD_OKAY) {
-                CC_CORE_INFO("Selected file: {}", outPath);
+                PC_CORE_INFO("Selected file: {}", outPath);
                 if (sceneController_->loadPointCloudFromFile(outPath)) {
-                    CC_CORE_INFO("Successfully loaded point cloud from {}", outPath);
+                    PC_CORE_INFO("Successfully loaded point cloud from {}", outPath);
                 } else {
-                    CC_CORE_ERROR("Failed to load point cloud from {}", outPath);
+                    PC_CORE_ERROR("Failed to load point cloud from {}", outPath);
                 }
                 NFD_FreePath(outPath);
             } else if (result == NFD_CANCEL) {
-                CC_CORE_INFO("User cancelled file dialog");
+                PC_CORE_INFO("User cancelled file dialog");
             } else {
-                CC_CORE_ERROR("File dialog error: {}", NFD_GetError());
+                PC_CORE_ERROR("File dialog error: {}", NFD_GetError());
             }
         }
 
@@ -120,11 +120,11 @@ void UIManager::renderFileMenu()
                     nfdresult_t result = NFD_SaveDialog(&outPath, filterItem, 1, nullptr, "cloud_labeled.ply");
 
                     if (result == NFD_OKAY) {
-                        CC_CORE_INFO("Saving to: {}", outPath);
+                        PC_CORE_INFO("Saving to: {}", outPath);
                         if (sceneController_->savePointCloudToFile(selectedObj->getName(), outPath, "ply")) {
-                            CC_CORE_INFO("Successfully saved PLY file with labels");
+                            PC_CORE_INFO("Successfully saved PLY file with labels");
                         } else {
-                            CC_CORE_ERROR("Failed to save PLY file");
+                            PC_CORE_ERROR("Failed to save PLY file");
                         }
                         NFD_FreePath(outPath);
                     }
@@ -136,11 +136,11 @@ void UIManager::renderFileMenu()
                     nfdresult_t result = NFD_SaveDialog(&outPath, filterItem, 1, nullptr, "cloud_labeled.ply");
 
                     if (result == NFD_OKAY) {
-                        CC_CORE_INFO("Saving to: {}", outPath);
+                        PC_CORE_INFO("Saving to: {}", outPath);
                         if (sceneController_->savePointCloudToFile(selectedObj->getName(), outPath, "ply_ascii")) {
-                            CC_CORE_INFO("Successfully saved PLY ASCII file with labels");
+                            PC_CORE_INFO("Successfully saved PLY ASCII file with labels");
                         } else {
-                            CC_CORE_ERROR("Failed to save PLY ASCII file");
+                            PC_CORE_ERROR("Failed to save PLY ASCII file");
                         }
                         NFD_FreePath(outPath);
                     }
@@ -152,11 +152,11 @@ void UIManager::renderFileMenu()
                     nfdresult_t result = NFD_SaveDialog(&outPath, filterItem, 1, nullptr, "cloud_labeled.xyzl");
 
                     if (result == NFD_OKAY) {
-                        CC_CORE_INFO("Saving to: {}", outPath);
+                        PC_CORE_INFO("Saving to: {}", outPath);
                         if (sceneController_->savePointCloudToFile(selectedObj->getName(), outPath, "xyzl")) {
-                            CC_CORE_INFO("Successfully saved XYZL file");
+                            PC_CORE_INFO("Successfully saved XYZL file");
                         } else {
-                            CC_CORE_ERROR("Failed to save XYZL file");
+                            PC_CORE_ERROR("Failed to save XYZL file");
                         }
                         NFD_FreePath(outPath);
                     }
@@ -191,12 +191,12 @@ void UIManager::renderSettingsMenu()
         if (ImGui::SliderFloat("FOV", &fov, 10.0f, 120.0f, "%.1f°")) {
             camera->setPerspective(fov, camera->getAspectRatio(),
                                  camera->getNear(), camera->getFar());
-            CC_CORE_TRACE("FOV changed to: {:.1f}°", fov);
+            PC_CORE_TRACE("FOV changed to: {:.1f}°", fov);
         }
 
         if (ImGui::MenuItem("Reset Camera", "R")) {
             sceneController_->resetCamera();
-            CC_CORE_INFO("Camera reset");
+            PC_CORE_INFO("Camera reset");
         }
 
         ImGui::Spacing();
@@ -220,10 +220,10 @@ void UIManager::renderSettingsMenu()
             enableAnnotationTools_ = !enableAnnotationTools_;
             if (enableAnnotationTools_) {
                 showLabelingToolbox_ = true;
-                CC_CORE_INFO("Annotation tools enabled");
+                PC_CORE_INFO("Annotation tools enabled");
             } else {
                 showLabelingToolbox_ = false;
-                CC_CORE_INFO("Annotation tools disabled");
+                PC_CORE_INFO("Annotation tools disabled");
             }
         }
 
@@ -234,11 +234,11 @@ void UIManager::renderSettingsMenu()
         if (ImGui::MenuItem("Toggle Verbose Logging", "V", verboseLogging_)) {
             verboseLogging_ = !verboseLogging_;
             if (verboseLogging_) {
-                CloudCore::Log::setDebug();
-                CC_CORE_INFO("Verbose logging enabled");
+                Perceptral::Log::setDebug();
+                PC_CORE_INFO("Verbose logging enabled");
             } else {
-                CloudCore::Log::setInfo();
-                CC_CORE_INFO("Verbose logging disabled");
+                Perceptral::Log::setInfo();
+                PC_CORE_INFO("Verbose logging disabled");
             }
         }
 
@@ -258,19 +258,19 @@ void UIManager::renderRenderingMenu()
 
         ImGui::Spacing();
 
-        bool isRecording = CloudCore::ImageExporter::isRecording();
+        bool isRecording = Perceptral::ImageExporter::isRecording();
         if (ImGui::MenuItem(isRecording ? "Stop Recording" : "Start Recording...", "F12")) {
             if (isRecording) {
-                CloudCore::ImageExporter::stopRecording(compileToVideo_);
-                CC_CORE_INFO("Recording stopped. {} frames captured",
-                           CloudCore::ImageExporter::getFrameCount());
+                Perceptral::ImageExporter::stopRecording(compileToVideo_);
+                PC_CORE_INFO("Recording stopped. {} frames captured",
+                           Perceptral::ImageExporter::getFrameCount());
             } else {
                 showRecordingDialog_ = true;
             }
         }
 
         if (isRecording) {
-            ImGui::Text("Recording: %d frames", CloudCore::ImageExporter::getFrameCount());
+            ImGui::Text("Recording: %d frames", Perceptral::ImageExporter::getFrameCount());
         }
 
         ImGui::Spacing();
@@ -286,12 +286,12 @@ void UIManager::renderRenderingMenu()
                 int currentColorMode = static_cast<int>(comp->colorMode);
 
                 if (ImGui::Combo("Mode", &currentColorMode, colorModeNames, IM_ARRAYSIZE(colorModeNames))) {
-                    comp->colorMode = static_cast<CloudCore::PointCloudColorMode>(currentColorMode);
-                    CC_CORE_INFO("Color mode changed to: {}", colorModeNames[currentColorMode]);
+                    comp->colorMode = static_cast<Perceptral::PointCloudColorMode>(currentColorMode);
+                    PC_CORE_INFO("Color mode changed to: {}", colorModeNames[currentColorMode]);
                 }
 
                 // Flat color picker
-                if (comp->colorMode == CloudCore::PointCloudColorMode::FlatColor) {
+                if (comp->colorMode == Perceptral::PointCloudColorMode::FlatColor) {
                     float color[3] = { comp->flatColor.x(), comp->flatColor.y(), comp->flatColor.z() };
                     if (ImGui::ColorEdit3("Color", color)) {
                         comp->flatColor = Eigen::Vector3f(color[0], color[1], color[2]);
@@ -353,17 +353,17 @@ void UIManager::renderLabelingMenu()
                 comp->showLabels = true;  // Automatically show labels when enabled
                 enableAnnotationTools_ = true;
                 showLabelingToolbox_ = true;
-                CC_CORE_INFO("Labeling mode enabled - all points rendered by label (default: 0 Unclassified)");
+                PC_CORE_INFO("Labeling mode enabled - all points rendered by label (default: 0 Unclassified)");
             } else {
                 comp->showLabels = false;
-                CC_CORE_INFO("Labeling mode disabled");
+                PC_CORE_INFO("Labeling mode disabled");
             }
         }
 
         // Overwrite mode toggle
         if (ImGui::MenuItem("Overwrite Existing Labels", nullptr, overwriteLabelsMode_, labelingModeEnabled_)) {
             overwriteLabelsMode_ = !overwriteLabelsMode_;
-            CC_CORE_INFO("Overwrite mode: {}", overwriteLabelsMode_ ? "ON (will overwrite all selected points)" : "OFF (will preserve existing labels)");
+            PC_CORE_INFO("Overwrite mode: {}", overwriteLabelsMode_ ? "ON (will overwrite all selected points)" : "OFF (will preserve existing labels)");
         }
 
         ImGui::Separator();
@@ -388,7 +388,7 @@ void UIManager::renderLabelingMenu()
                 std::string menuLabel = std::to_string(label.id) + ": " + label.name;
                 if (ImGui::MenuItem(menuLabel.c_str(), nullptr, isActive)) {
                     activeLabelId_ = label.id;
-                    CC_CORE_INFO("Active label changed to: {} - {}", label.id, label.name);
+                    PC_CORE_INFO("Active label changed to: {} - {}", label.id, label.name);
                 }
 
                 ImGui::PopStyleColor();
@@ -406,7 +406,7 @@ void UIManager::renderLabelingMenu()
         if (ImGui::MenuItem("Apply & Clear Selection")) {
             selectedObj->assignLabelToSelected(activeLabelId_, overwriteLabelsMode_);
             selectedObj->clearSelection();
-            CC_CORE_INFO("Applied label {} and cleared selection", activeLabelId_);
+            PC_CORE_INFO("Applied label {} and cleared selection", activeLabelId_);
         }
 
         ImGui::EndDisabled();
@@ -424,15 +424,15 @@ void UIManager::renderLabelingMenu()
             if (labelDef) {
                 if (ImGui::MenuItem("Default Labels")) {
                     labelDef->loadDefaultLabels();
-                    CC_CORE_INFO("Loaded default labels");
+                    PC_CORE_INFO("Loaded default labels");
                 }
                 if (ImGui::MenuItem("LiDAR Labels")) {
                     labelDef->loadLiDARLabels();
-                    CC_CORE_INFO("Loaded LiDAR labels");
+                    PC_CORE_INFO("Loaded LiDAR labels");
                 }
                 if (ImGui::MenuItem("Semantic Segmentation")) {
                     labelDef->loadSemanticSegmentationLabels();
-                    CC_CORE_INFO("Loaded semantic segmentation labels");
+                    PC_CORE_INFO("Loaded semantic segmentation labels");
                 }
             }
             ImGui::EndMenu();
@@ -523,7 +523,7 @@ void UIManager::renderObjectListPanel()
             bool visible = obj->isVisible();
             if (ImGui::Checkbox("##visible", &visible)) {
                 obj->setVisible(visible);
-                CC_CORE_INFO("Object '{}' visibility: {}", obj->getName(), visible ? "visible" : "hidden");
+                PC_CORE_INFO("Object '{}' visibility: {}", obj->getName(), visible ? "visible" : "hidden");
             }
 
             ImGui::SameLine();
@@ -574,7 +574,7 @@ void UIManager::renderObjectListPanel()
             for (size_t i = 0; i < objects.size(); ++i) {
                 objects[i]->setVisible(true);
             }
-            CC_CORE_INFO("All objects set to visible");
+            PC_CORE_INFO("All objects set to visible");
         }
 
         ImGui::SameLine();
@@ -583,7 +583,7 @@ void UIManager::renderObjectListPanel()
             for (size_t i = 0; i < objects.size(); ++i) {
                 objects[i]->setVisible(false);
             }
-            CC_CORE_INFO("All objects set to hidden");
+            PC_CORE_INFO("All objects set to hidden");
         }
     }
 
@@ -620,11 +620,11 @@ void UIManager::renderScreenshotDialog(int windowWidth, int windowHeight)
         const char* extensions[] = { ".png", ".jpg", ".bmp" };
         filename += extensions[screenshotFormat_];
 
-        if (CloudCore::ImageExporter::saveScreenshot(filename, windowWidth, windowHeight)) {
-            CC_CORE_INFO("Screenshot saved: {}", filename);
+        if (Perceptral::ImageExporter::saveScreenshot(filename, windowWidth, windowHeight)) {
+            PC_CORE_INFO("Screenshot saved: {}", filename);
             showScreenshotDialog_ = false;
         } else {
-            CC_CORE_ERROR("Failed to save screenshot");
+            PC_CORE_ERROR("Failed to save screenshot");
         }
     }
 
@@ -660,8 +660,8 @@ void UIManager::renderRecordingDialog(int windowWidth, int windowHeight)
             path = ss.str();
         }
 
-        CloudCore::ImageExporter::startRecording(path, windowWidth, windowHeight, recordingFPS_);
-        CC_CORE_INFO("Recording started to: {}", path);
+        Perceptral::ImageExporter::startRecording(path, windowWidth, windowHeight, recordingFPS_);
+        PC_CORE_INFO("Recording started to: {}", path);
         showRecordingDialog_ = false;
     }
 
@@ -679,7 +679,7 @@ void UIManager::renderAboutDialog()
     ImGui::Begin("About Point Cloud Tool", &showAboutDialog_, ImGuiWindowFlags_AlwaysAutoResize);
 
     ImGui::Text("Point Cloud Tool v1.0");
-    ImGui::Text("Built on CloudCore Engine");
+    ImGui::Text("Built on Perceptral Engine");
     ImGui::Separator();
     ImGui::Spacing();
 
@@ -829,7 +829,7 @@ void UIManager::renderLabelingToolbox()
     ImGui::Spacing();
 
     if (ImGui::Checkbox("Show Labels", &comp->showLabels)) {
-        CC_CORE_INFO("Label display: {}", comp->showLabels ? "ON" : "OFF");
+        PC_CORE_INFO("Label display: {}", comp->showLabels ? "ON" : "OFF");
     }
 
     ImGui::Spacing();
@@ -842,7 +842,7 @@ void UIManager::renderLabelingToolbox()
     ImGui::Spacing();
 
     if (ImGui::Checkbox("Overwrite Existing Labels", &overwriteLabelsMode_)) {
-        CC_CORE_INFO("Overwrite mode: {}", overwriteLabelsMode_ ? "ON (will overwrite all selected points)" : "OFF (will preserve existing labels)");
+        PC_CORE_INFO("Overwrite mode: {}", overwriteLabelsMode_ ? "ON (will overwrite all selected points)" : "OFF (will preserve existing labels)");
     }
 
     ImGui::Spacing();
@@ -889,7 +889,7 @@ void UIManager::renderLabelingToolbox()
                 size_t numSelected = selectedObj->getSelectionCount();
                 selectedObj->assignLabelToSelected(label.id, overwriteLabelsMode_);
                 selectedObj->clearSelection();
-                CC_CORE_INFO("Assigned label {} to {} points and cleared selection", label.id, numSelected);
+                PC_CORE_INFO("Assigned label {} to {} points and cleared selection", label.id, numSelected);
             }
 
             ImGui::PopStyleColor(3);
@@ -918,12 +918,12 @@ void UIManager::renderLabelingToolbox()
         // Show All button
         if (ImGui::Button("Show All labels", ImVec2(150, 0))) {
             selectedObj->showAllLabels();
-            CC_CORE_INFO("All labels shown");
+            PC_CORE_INFO("All labels shown");
         }
 
         if (ImGui::Button("Focus select", ImVec2(150, 0))) {
             selectedObj->showSelection();
-            CC_CORE_INFO("Focus on selection only");
+            PC_CORE_INFO("Focus on selection only");
         }
 
         ImGui::Spacing();
@@ -1070,7 +1070,7 @@ void UIManager::renderViewGizmo()
 
     if (ImGui::Button("T", ImVec2(btnW, btnH))) {
         camera->setViewTop();
-        CC_CORE_INFO("View set to Top");
+        PC_CORE_INFO("View set to Top");
     }
     if (ImGui::IsItemHovered()) {
         ImGui::SetTooltip("Top View");
@@ -1079,7 +1079,7 @@ void UIManager::renderViewGizmo()
     // Row 2
     if (ImGui::Button("L", ImVec2(btnW, btnH))) {
         camera->setViewLeft();
-        CC_CORE_INFO("View set to Left");
+        PC_CORE_INFO("View set to Left");
     }
     if (ImGui::IsItemHovered()) {
         ImGui::SetTooltip("Left View");
@@ -1089,7 +1089,7 @@ void UIManager::renderViewGizmo()
 
     if (ImGui::Button("F", ImVec2(btnW, btnH))) {
         camera->setViewFront();
-        CC_CORE_INFO("View set to Front");
+        PC_CORE_INFO("View set to Front");
     }
     if (ImGui::IsItemHovered()) {
         ImGui::SetTooltip("Front View");
@@ -1099,7 +1099,7 @@ void UIManager::renderViewGizmo()
 
     if (ImGui::Button("R", ImVec2(btnW, btnH))) {
         camera->setViewRight();
-        CC_CORE_INFO("View set to Right");
+        PC_CORE_INFO("View set to Right");
     }
     if (ImGui::IsItemHovered()) {
         ImGui::SetTooltip("Right View");
@@ -1111,7 +1111,7 @@ void UIManager::renderViewGizmo()
 
     if (ImGui::Button("B", ImVec2(btnW, btnH))) {
         camera->setViewBottom();
-        CC_CORE_INFO("View set to Bottom");
+        PC_CORE_INFO("View set to Bottom");
     }
     if (ImGui::IsItemHovered()) {
         ImGui::SetTooltip("Bottom View");
@@ -1121,7 +1121,7 @@ void UIManager::renderViewGizmo()
 
     if (ImGui::Button("Bk", ImVec2(btnW, btnH))) {
         camera->setViewBack();
-        CC_CORE_INFO("View set to Back");
+        PC_CORE_INFO("View set to Back");
     }
     if (ImGui::IsItemHovered()) {
         ImGui::SetTooltip("Back View");

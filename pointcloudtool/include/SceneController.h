@@ -1,9 +1,9 @@
 #pragma once
 
 #include "PointCloudObject.h"
-#include "core/DeltaTime.h"
-#include "scene/Scene.h"
-#include "core/Camera.h"
+#include <Perceptral/core/DeltaTime.h>
+#include <Perceptral/scene/Scene.h>
+#include <Perceptral/core/Camera.h>
 #include <memory>
 #include <vector>
 #include <unordered_map>
@@ -21,11 +21,11 @@ namespace PointCloudTool {
  */
 class SceneController {
 public:
-    SceneController(std::shared_ptr<CloudCore::Scene> scene, CloudCore::Camera* camera);
+    SceneController(std::shared_ptr<Perceptral::Scene> scene, Perceptral::Camera* camera);
     ~SceneController() = default;
 
     // Object management
-    PointCloudObject* addPointCloudObject(const std::string& name, std::shared_ptr<CloudCore::PointCloud> pointCloud);
+    PointCloudObject* addPointCloudObject(const std::string& name, std::shared_ptr<Perceptral::PointCloud> pointCloud);
     void removePointCloudObject(const std::string& name);
     void removeAllObjects();
 
@@ -45,15 +45,15 @@ public:
     void resetCamera();
 
     // Update loop
-    void update(CloudCore::DeltaTime deltaTime);
+    void update(Perceptral::DeltaTime deltaTime);
 
     // Scene access
-    std::shared_ptr<CloudCore::Scene> getScene() const { return scene_; }
-    CloudCore::Camera* getCamera() const { return camera_; }
+    std::shared_ptr<Perceptral::Scene> getScene() const { return scene_; }
+    Perceptral::Camera* getCamera() const { return camera_; }
 
 private:
-    std::shared_ptr<CloudCore::Scene> scene_;
-    CloudCore::Camera* camera_;  // Non-owning pointer
+    std::shared_ptr<Perceptral::Scene> scene_;
+    Perceptral::Camera* camera_;  // Non-owning pointer
     std::vector<std::unique_ptr<PointCloudObject>> objects_;
     std::unordered_map<std::string, PointCloudObject*> objectMap_;
 

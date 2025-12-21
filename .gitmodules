@@ -1,15 +1,12 @@
-[submodule "cloudanntool/external/imgui"]
-	path = cloudanntool/external/imgui
+[submodule "Perceptral/external/imgui"]
+	path = Perceptral/external/imgui
 	url = https://github.com/ocornut/imgui.git
-[submodule "cloudanntool/external/entt"]
-	path = cloudanntool/external/entt
+[submodule "Perceptral/external/entt"]
+	path = Perceptral/external/entt
 	url = https://github.com/skypjack/entt.git
-[submodule "pointcloudtool/external/nativefiledialog-extended"]
-	path = pointcloudtool/external/nativefiledialog-extended
-	url = https://github.com/btzy/nativefiledialog-extended.git
-[submodule "cloudanntool/external/spdlog"]
-	path = cloudanntool/external/spdlog
+[submodule "Perceptral/external/spdlog"]
+	path = Perceptral/external/spdlog
 	url = https://github.com/gabime/spdlog.git
-[submodule "cloudanntool/external/glfw"]
-	path = cloudanntool/external/glfw
+[submodule "Perceptral/external/glfw"]
+	path = Perceptral/external/glfw
 	url = https://github.com/glfw/glfw.git

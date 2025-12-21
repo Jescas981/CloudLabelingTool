@@ -1,8 +1,8 @@
 #pragma once
 
-#include "core/Camera.h"
-#include "core/Event.h"
-#include "core/Input.h"
+#include <Perceptral/core/Camera.h>
+#include <Perceptral/core/Event.h>
+#include <Perceptral/core/Input.h>
 
 namespace PointCloudTool {
 
@@ -13,9 +13,9 @@ enum class CameraMode {
 
 class CameraController {
 public:
-    CameraController(CloudCore::Camera* camera);
+    CameraController(Perceptral::Camera* camera);
 
-    bool onEvent(CloudCore::Event& e);
+    bool onEvent(Perceptral::Event& e);
     bool isCapturingInput() const;
     
     // Mode switching
@@ -27,12 +27,12 @@ public:
     void onUpdate(float deltaTime);
 
 private:
-    bool onMouseButtonPressed(CloudCore::MouseButtonPressedEvent& e);
-    bool onMouseButtonReleased(CloudCore::MouseButtonReleasedEvent& e);
-    bool onMouseMoved(CloudCore::MouseMovedEvent& e);
-    bool onMouseScrolled(CloudCore::MouseScrolledEvent& e);
+    bool onMouseButtonPressed(Perceptral::MouseButtonPressedEvent& e);
+    bool onMouseButtonReleased(Perceptral::MouseButtonReleasedEvent& e);
+    bool onMouseMoved(Perceptral::MouseMovedEvent& e);
+    bool onMouseScrolled(Perceptral::MouseScrolledEvent& e);
 
-    CloudCore::Camera* camera_;
+    Perceptral::Camera* camera_;
     
     // Mouse state
     bool leftMousePressed_ = false;
