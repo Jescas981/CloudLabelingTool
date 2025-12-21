@@ -4,6 +4,9 @@
 [submodule "Perceptral/external/entt"]
 	path = Perceptral/external/entt
 	url = https://github.com/skypjack/entt.git
+[submodule "pointcloudtool/external/nativefiledialog-extended"]
+	path = pointcloudtool/external/nativefiledialog-extended
+	url = https://github.com/btzy/nativefiledialog-extended.git
 [submodule "Perceptral/external/spdlog"]
 	path = Perceptral/external/spdlog
 	url = https://github.com/gabime/spdlog.git
