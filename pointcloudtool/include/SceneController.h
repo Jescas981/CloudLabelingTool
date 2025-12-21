@@ -1,9 +1,9 @@
 #pragma once
 
 #include "PointCloudObject.h"
+#include "core/DeltaTime.h"
 #include "scene/Scene.h"
 #include "core/Camera.h"
-#include "core/Timestep.h"
 #include <memory>
 #include <vector>
 #include <unordered_map>
@@ -45,7 +45,7 @@ public:
     void resetCamera();
 
     // Update loop
-    void update(CloudCore::Timestep deltaTime);
+    void update(CloudCore::DeltaTime deltaTime);
 
     // Scene access
     std::shared_ptr<CloudCore::Scene> getScene() const { return scene_; }

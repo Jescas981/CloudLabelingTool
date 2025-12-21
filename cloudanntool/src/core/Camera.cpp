@@ -204,8 +204,6 @@ void Camera::updateCameraVectors()
     front_ = front.normalized();
     right_ = front_.cross(worldUp_).normalized();
     up_ = right_.cross(front_).normalized();
-
-    std::cout << front_ << std::endl;
 }
 
 // Orbit camera controls

@@ -1,6 +1,8 @@
 #include "PointCloudObject.h"
+#include "core/DeltaTime.h"
 #include "scene/Scene.h"  // Required for Entity template implementations
 #include "core/Log.h"
+#include "core/Macros.h"
 
 namespace PointCloudTool {
 
@@ -28,8 +30,9 @@ void PointCloudObject::onCreate(CloudCore::Entity entity)
     CC_CORE_INFO("PointCloudObject '{}' created with {} points", name_, pointCloud_->size());
 }
 
-void PointCloudObject::onUpdate(CloudCore::Timestep deltaTime)
+void PointCloudObject::onUpdate(CloudCore::DeltaTime deltaTime)
 {
+    UNUSED(deltaTime);
     // Object-specific update logic can go here
     // For example: animations, physics, procedural modifications, etc.
 }

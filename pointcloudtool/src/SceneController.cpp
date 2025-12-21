@@ -142,7 +142,7 @@ void SceneController::resetCamera()
     }
 }
 
-void SceneController::update(CloudCore::Timestep deltaTime)
+void SceneController::update(CloudCore::DeltaTime deltaTime)
 {
     // Update all objects
     for (auto& object : objects_) {

@@ -1,4 +1,5 @@
 #include "core/Application.h"
+#include "core/DeltaTime.h"
 #include "core/Event.h"
 #include "core/KeyCodes.h"
 #include "core/Log.h"
@@ -84,7 +85,7 @@ public:
     CC_INFO("NFD shutdown complete");
   }
 
-  void onUpdate(Timestep deltaTime) override {
+  void onUpdate(DeltaTime deltaTime) override {
     // Update scene (updates all objects)
     // sceneController_->update(deltaTime);
     // cameraController_->onUpdate(deltaTime);
@@ -256,7 +257,7 @@ private:
     return false;
   }
 
-  void fpsCounter(Timestep deltaTime) {
+  void fpsCounter(DeltaTime deltaTime) {
     static double accumulatedTime = 0.0;
     static int frameCount = 0;
     accumulatedTime += deltaTime;

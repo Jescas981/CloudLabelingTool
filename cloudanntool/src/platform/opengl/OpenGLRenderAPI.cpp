@@ -1,4 +1,5 @@
 #include "platform/opengl/OpenGLRenderAPI.h"
+#include "core/Log.h"
 #include "renderer/VertexArray.h"
 #include <glad/glad.h>
 #include <iostream>
@@ -7,15 +8,19 @@ namespace CloudCore {
 
 void OpenGLRenderAPI::init() {
   glEnable(GL_DEPTH_TEST);
+  glDepthMask(GL_TRUE);
   glEnable(GL_MULTISAMPLE);
   glEnable(GL_PROGRAM_POINT_SIZE);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  std::cout << "OpenGL Renderer initialized" << std::endl;
-  std::cout << "  Vendor: " << glGetString(GL_VENDOR) << std::endl;
-  std::cout << "  Renderer: " << glGetString(GL_RENDERER) << std::endl;
-  std::cout << "  Version: " << glGetString(GL_VERSION) << std::endl;
+  CC_CORE_DEBUG("OpenGL Renderer initialized");
+  CC_CORE_DEBUG("  Vendor: {}",
+                reinterpret_cast<const char *>(glGetString(GL_VENDOR)));
+  CC_CORE_DEBUG("  Renderer: {}",
+                reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+  CC_CORE_DEBUG("  Version: {}",
+                reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 }
 
 void OpenGLRenderAPI::shutdown() {
@@ -23,11 +28,11 @@ void OpenGLRenderAPI::shutdown() {
 }
 
 void OpenGLRenderAPI::beginFrame() {
-  // Cleanup if needed
+  // Nothing needed for OpenGL
 }
 
 void OpenGLRenderAPI::endFrame() {
-  // Cleanup if needed
+  // Nothing needed for OpenGL
 }
 
 void OpenGLRenderAPI::setViewport(uint32_t x, uint32_t y, uint32_t width,
@@ -52,23 +57,53 @@ void OpenGLRenderAPI::drawIndexed(
 }
 
 void OpenGLRenderAPI::drawArrays(
-    const std::shared_ptr<VertexArray> &vertexArray, uint32_t vertexCount) {
+    const std::shared_ptr<VertexArray> &vertexArray, uint32_t vertexCount,
+    PrimitiveType type) {
   vertexArray->bind();
-  glDrawArrays(GL_POINTS, 0, vertexCount);
+  GLenum glType;
+  switch (type) {
+  case PrimitiveType::Points:
+    glType = GL_POINTS;
+    break;
+  case PrimitiveType::Lines:
+    glType = GL_LINES;
+    break;
+  case PrimitiveType::LineStrip:
+    glType = GL_LINE_STRIP;
+    break;
+  case PrimitiveType::Triangles:
+    glType = GL_TRIANGLES;
+    break;
+  case PrimitiveType::TriangleStrip:
+    glType = GL_TRIANGLE_STRIP;
+    break;
+  case PrimitiveType::TriangleFan:
+    glType = GL_TRIANGLE_FAN;
+    break;
+  }
+
+  glDrawArrays(glType, 0, vertexCount);
 }
 
 void OpenGLRenderAPI::setDepthTest(bool enabled) {
-  if (enabled)
+  if (enabled) {
     glEnable(GL_DEPTH_TEST);
-  else
+  } else {
     glDisable(GL_DEPTH_TEST);
+  }
+}
+
+void OpenGLRenderAPI::setDepthMask(bool enabled) {
+  glDepthMask(enabled ? GL_TRUE : GL_FALSE);
 }
 
 void OpenGLRenderAPI::setBlending(bool enabled) {
-  if (enabled)
+  if (enabled) {
     glEnable(GL_BLEND);
-  else
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  } else {
     glDisable(GL_BLEND);
+  }
 }
 
 void OpenGLRenderAPI::setWireframe(bool enabled) {

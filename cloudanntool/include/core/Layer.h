@@ -1,7 +1,7 @@
 #pragma once
 #include "core/Event.h"
-#include "core/Platform.h"
-#include "core/Timestep.h"
+#include "core/Macros.h"
+#include "core/DeltaTime.h"
 #include <string>
 
 // core/Layer.h
@@ -16,7 +16,7 @@ public:
   virtual void onDetach() {}
 
   // Per-frame callbacks
-  virtual void onUpdate(Timestep ts) { UNUSED(ts); }
+  virtual void onUpdate(DeltaTime ts) { UNUSED(ts); }
   virtual void onRender() {}
   virtual void onImGuiRender() {}
 

@@ -14,15 +14,14 @@
     set(CORE_SOURCES
         src/core/Log.cpp
         # Core
-        src/core/Engine.cpp
         src/core/Window.cpp
-        src/core/Renderer.cpp
         src/core/EventManager.cpp
         src/core/Camera.cpp
         src/core/Application.cpp
         src/core/Input.cpp
         src/core/LayerStack.cpp
         src/core/layers/RenderLayer.cpp
+        src/core/Time.cpp
 
         # Old rendering (keeping for compatibility)
         src/rendering/PointCloudRenderer.cpp
@@ -48,7 +47,6 @@
         src/scene/Scene.cpp
         src/scene/Entity.cpp
         src/scene/Components.cpp
-        src/scene/Systems.cpp
         src/scene/SceneManager.cpp
         src/scene/PointCloud.cpp
         src/scene/LabelDefinition.cpp
@@ -65,15 +63,14 @@
     set(CORE_HEADERS
         include/core/Log.h
         # Core
-        include/core/Engine.h
         include/core/Window.h
         include/core/EventManager.h
         include/core/Camera.h
         include/core/Application.h
-        include/core/Timestep.h
         include/core/Input.h
         include/core/KeyCodes.h
         include/core/Event.h
+        include/core/Time.h
 
         # Old rendering (keeping for compatibility)
         include/rendering/PointCloudRenderer.h
@@ -98,7 +95,6 @@
         include/scene/Scene.h
         include/scene/Entity.h
         include/scene/Components.h
-        include/scene/Systems.h
         include/scene/SceneManager.h
         include/scene/PointCloud.h
         include/scene/LabelDefinition.h

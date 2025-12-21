@@ -1,6 +1,7 @@
 // renderer/passes/BackgroundPass.h
 #include "renderer/RenderPass.h"
 #include "rendering/GridRenderer.h"
+#include "core/Macros.h"
 
 namespace CloudCore {
 
@@ -16,17 +17,8 @@ public:
     }
 
     void execute(Scene& scene, Camera& camera) override {
-        // auto& registry = scene.getRegistry();
-        
-        // Check if background settings exist
-        // if (!registry.ctx().contains<BackgroundSettings>()) {
-        //     return;
-        // }
-        
-        // auto& settings = registry.ctx().get<BackgroundSettings>();
-        // if (!settings.enabled) {
-        //     return;
-        // }
+        UNUSED(scene);
+        UNUSED(camera);
 
         if (!m_renderer) {
             m_renderer = std::make_unique<GridRenderer>();

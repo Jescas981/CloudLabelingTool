@@ -2,6 +2,7 @@
 
 #include <Eigen/Core>
 #include <memory>
+#include <renderer/Renderer.h>
 
 namespace CloudCore {
 
@@ -32,11 +33,12 @@ public:
     virtual void clear() = 0;
 
     // Drawing
-    virtual void drawIndexed(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount = 0) = 0;
-    virtual void drawArrays(const std::shared_ptr<VertexArray>& vertexArray, uint32_t vertexCount) = 0;
+    virtual void drawIndexed(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount) = 0;
+    virtual void drawArrays(const std::shared_ptr<VertexArray>& vertexArray, uint32_t vertexCount, PrimitiveType type) = 0;
 
     // State
     virtual void setDepthTest(bool enabled) = 0;
+    virtual void setDepthMask(bool enabled) = 0;
     virtual void setBlending(bool enabled) = 0;
     virtual void setWireframe(bool enabled) = 0;
     virtual void setPointSize(float size) = 0;
@@ -44,7 +46,7 @@ public:
 
     // API info
     static API getAPI() { return s_API; }
-    static void setAPI(API api) { s_API = api; }
+    // static void setAPI(API api) { s_API = api; }
 
     // Factory
     static std::unique_ptr<RenderAPI> create();

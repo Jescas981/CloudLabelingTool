@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Entity.h"
-#include "core/Timestep.h"
+#include "core/DeltaTime.h"
 #include <entt/entt.hpp>
 #include <string>
 
@@ -17,7 +17,7 @@ public:
 
     // Scene lifecycle
     virtual void onCreate();
-    virtual void onUpdate(Timestep deltaTime);
+    virtual void onUpdate(DeltaTime deltaTime);
     virtual void onRender();
     virtual void onDestroy() {}
 

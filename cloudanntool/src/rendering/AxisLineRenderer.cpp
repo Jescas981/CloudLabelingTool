@@ -30,7 +30,7 @@ void AxisLineRenderer::initialize() {
   const float halfSize = gridSize / 2.0f;
 
   // Grid color (subtle gray)
-  const float gridR = 0.3f, gridG = 0.3f, gridB = 0.3f, gridA = 0.3f;
+  const float gridR = 0.3f, gridG = 0.3f, gridB = 0.3f;
 
   // Create grid on XY plane (Z=0, since Z is up)
   // Lines parallel to X axis (varying Y)

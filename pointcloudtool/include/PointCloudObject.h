@@ -3,7 +3,7 @@
 #include "scene/Entity.h"
 #include "scene/Components.h"
 #include "scene/PointCloud.h"
-#include "core/Timestep.h"
+#include "core/DeltaTime.h"
 #include <memory>
 #include <string>
 
@@ -26,7 +26,7 @@ public:
 
     // Lifecycle methods
     void onCreate(CloudCore::Entity entity);
-    void onUpdate(CloudCore::Timestep deltaTime);
+    void onUpdate(CloudCore::DeltaTime deltaTime);
     void onDestroy();
 
     // Getters

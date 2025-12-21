@@ -2,7 +2,8 @@
 
 #include "Window.h"
 #include "core/LayerStack.h"
-#include "Timestep.h"
+#include "core/Macros.h"
+#include "core/DeltaTime.h"
 #include "Event.h"
 #include "EventManager.h"
 #include "Camera.h"
@@ -50,7 +51,7 @@ public:
 
 protected:
     virtual void onInit() {}
-    virtual void onUpdate(Timestep deltaTime) {}
+    virtual void onUpdate(DeltaTime deltaTime) {UNUSED(deltaTime);}
     virtual void onRender() {}
     virtual void onImGuiRender() {}
     virtual void onShutdown() {}
@@ -60,8 +61,6 @@ protected:
     bool onWindowResize(WindowResizeEvent& e);
 
 private:
-    void updateFrameTiming();
-
     static Application* s_Instance;
     
     LayerStack m_layerStack; 
@@ -74,11 +73,7 @@ private:
     SceneManager sceneManager_;
 
     bool running_;
-    double deltaTime_;
-    double lastFrameTime_;
-    double fps_;
-    int frameCount_;
-    double fpsUpdateTime_;
+    float lastFrameTime_;
 };
 
 } // namespace CloudCore

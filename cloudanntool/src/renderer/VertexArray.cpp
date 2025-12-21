@@ -1,8 +1,8 @@
 #include "renderer/VertexArray.h"
-#include "core/Platform.h"
 #include "platform/opengl/OpenGLVertexArray.h"
 #include "renderer/RenderAPI.h"
 #include <iostream>
+#include <core/Macros.h>
 
 namespace CloudCore {
 

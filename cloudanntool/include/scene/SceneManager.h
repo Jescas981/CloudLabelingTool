@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "core/DeltaTime.h"
 #include <memory>
 #include <vector>
 
@@ -21,7 +22,7 @@ public:
     bool hasScene() const { return !sceneStack_.empty(); }
 
     // Update/render current scene
-    void update(Timestep deltaTime);
+    void update(DeltaTime deltaTime);
     void render();
 
 private:

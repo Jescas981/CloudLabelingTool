@@ -1,7 +1,7 @@
 #include "core/Window.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
+#include "core/Log.h"
 
 namespace CloudCore {
 
@@ -24,7 +24,7 @@ bool Window::create(int width, int height, const std::string& title)
     title_ = title;
 
     // Set OpenGL version
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -35,10 +35,17 @@ bool Window::create(int width, int height, const std::string& title)
     // Enable MSAA
     glfwWindowHint(GLFW_SAMPLES, 4);
 
+    if (!glfwInit()) {
+        CC_CORE_ERROR("Failed to initialize GLFW");
+        return false;
+    }
+
+    CC_CORE_DEBUG("GLFW initialized");
+
     // Create window
     window_ = glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
     if (!window_) {
-        std::cerr << "Failed to create GLFW window" << std::endl;
+        CC_CORE_ERROR("Failed to create window");
         return false;
     }
 
@@ -46,7 +53,7 @@ bool Window::create(int width, int height, const std::string& title)
 
     // Load OpenGL function pointers
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
+        CC_CORE_ERROR("Failed to initialize glad");
         return false;
     }
 
@@ -59,8 +66,8 @@ bool Window::create(int width, int height, const std::string& title)
     // Enable vsync
     glfwSwapInterval(1);
 
-    std::cout << "Window created: " << width_ << "x" << height_ << std::endl;
-    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
+    CC_CORE_DEBUG("Window created: {} x {}" ,width_ ,height_);
+    CC_CORE_DEBUG("Something: {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
     return true;
 }
@@ -69,6 +76,7 @@ void Window::destroy()
 {
     if (window_) {
         glfwDestroyWindow(window_);
+        glfwTerminate();
         window_ = nullptr;
     }
 }

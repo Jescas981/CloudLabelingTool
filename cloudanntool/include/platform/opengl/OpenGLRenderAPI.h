@@ -3,7 +3,6 @@
 #include "renderer/RenderAPI.h"
 
 namespace CloudCore {
-
 class OpenGLRenderAPI : public RenderAPI {
 public:
     virtual void init() override;
@@ -17,9 +16,10 @@ public:
     virtual void clear() override;
 
     virtual void drawIndexed(const std::shared_ptr<VertexArray>& vertexArray, uint32_t indexCount = 0) override;
-    virtual void drawArrays(const std::shared_ptr<VertexArray>& vertexArray, uint32_t vertexCount) override;
+    virtual void drawArrays(const std::shared_ptr<VertexArray>& vertexArray, uint32_t vertexCount, PrimitiveType type) override;
 
     virtual void setDepthTest(bool enabled) override;
+    virtual void setDepthMask(bool enabled) override;
     virtual void setBlending(bool enabled) override;
     virtual void setWireframe(bool enabled) override;
     virtual void setPointSize(float size) override;

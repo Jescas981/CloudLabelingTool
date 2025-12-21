@@ -1,11 +1,12 @@
 #include "core/Application.h"
 #include "core/Log.h"
+#include "core/Macros.h"
 #include "core/Window.h"
 #include "core/Input.h"
 #include "renderer/Renderer.h"
-#include "renderer/Renderer.h"
-#include "scene/Systems.h"
-#include <GLFW/glfw3.h>
+#include "renderer/RenderAPI.h"
+#include "core/Time.h"
+#include "core/DeltaTime.h"
 
 namespace CloudCore {
 
@@ -14,11 +15,7 @@ Application* Application::s_Instance = nullptr;
 Application::Application(const std::string& name)
     : name_(name)
     , running_(false)
-    , deltaTime_(0.0)
-    , lastFrameTime_(0.0)
-    , fps_(0.0)
-    , frameCount_(0)
-    , fpsUpdateTime_(0.0) {
+    , lastFrameTime_(0.0) {
     s_Instance = this;
 }
 
@@ -31,20 +28,10 @@ bool Application::initialize(int width, int height) {
     Log::init();
     CC_CORE_INFO("Initializing Application: {}", name_);
 
-    // Initialize GLFW
-    if (!glfwInit()) {
-        CC_CORE_ERROR("Failed to initialize GLFW");
-        return false;
-    }
-    CC_CORE_DEBUG("GLFW initialized");
+    Time::initialize();
+    CC_CORE_INFO("Time system initialized");
 
-    // Create window
     window_ = std::make_unique<Window>();
-    if (!window_->create(width, height, name_)) {
-        CC_CORE_ERROR("Failed to create window");
-        glfwTerminate();
-        return false;
-    }
     CC_CORE_INFO("Window created: {}x{}", width, height);
 
     // Initialize RenderAPI
@@ -82,8 +69,7 @@ bool Application::initialize(int width, int height) {
     onInit();
 
     running_ = true;
-    lastFrameTime_ = glfwGetTime();
-    fpsUpdateTime_ = lastFrameTime_;
+    lastFrameTime_ = Time::getTime();
 
     CC_CORE_INFO("{} initialized successfully", name_);
     return true;
@@ -91,21 +77,20 @@ bool Application::initialize(int width, int height) {
 
 void Application::run() {
     while (running_ && !window_->shouldClose()) {
-        updateFrameTiming();
-
         // Poll events
         window_->pollEvents();
         eventManager_->processEvents();
 
         // Update
-        Timestep timestep(static_cast<float>(deltaTime_));
+        float currentTime = Time::getTime();
+        DeltaTime deltaTime = currentTime - lastFrameTime_;
 
         // Update all layers (bottom to top)
         for (Layer* layer : m_layerStack) {
-            layer->onUpdate(timestep);
+            layer->onUpdate(deltaTime);
         }
 
-        onUpdate(timestep);
+        onUpdate(deltaTime);
 
         // Render all layers
         Renderer::clear();
@@ -138,9 +123,11 @@ void Application::shutdown() {
 
     onShutdown();
 
-    // Clean up rendering systems before destroying OpenGL context
-    PointCloudRenderSystem::shutdown();
-    CC_CORE_DEBUG("Render systems shutdown");
+     for (Layer* layer : m_layerStack) {
+        layer->onDetach();
+    }
+
+    CC_CORE_DEBUG("Layers should go down");
 
     camera_.reset();
     eventManager_.reset();
@@ -148,7 +135,6 @@ void Application::shutdown() {
     Renderer::shutdown();
     window_.reset();
 
-    glfwTerminate();
     CC_CORE_INFO("Application shutdown complete");
     Log::shutdown();
 }
@@ -175,6 +161,7 @@ void Application::onEvent(Event& e) {
 }
 
 bool Application::onWindowClose(WindowCloseEvent& e) {
+    UNUSED(e);
     stop();
     return true;
 }
@@ -201,20 +188,6 @@ void Application::pushScene(std::shared_ptr<Scene> scene) {
 void Application::setScene(std::shared_ptr<Scene> scene) {
     scene->setCamera(camera_.get());
     sceneManager_.setScene(scene);
-}
-
-void Application::updateFrameTiming() {
-    double currentTime = glfwGetTime();
-    deltaTime_ = currentTime - lastFrameTime_;
-    lastFrameTime_ = currentTime;
-
-    // Update FPS counter
-    frameCount_++;
-    if (currentTime - fpsUpdateTime_ >= 1.0) {
-        fps_ = frameCount_ / (currentTime - fpsUpdateTime_);
-        frameCount_ = 0;
-        fpsUpdateTime_ = currentTime;
-    }
 }
 
 } // namespace CloudCore

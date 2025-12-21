@@ -1,6 +1,7 @@
 #include "io/PLYLoader.h"
 #include "scene/PointCloud.h"
 #include <happly.h>
+#include <core/Log.h>
 #include <iostream>
 
 namespace CloudCore {
@@ -105,7 +106,7 @@ bool PLYLoader::save(const std::string& filepath, const PointCloud& pointCloud, 
             plyOut.write(filepath, happly::DataFormat::ASCII);
         }
         
-        std::cout << "Saved PLY file: " << filepath << " with " << cloud->size() << " points" << std::endl;
+        CC_INFO( "Saved PLY file: {} with {} points",filepath, cloud->size());
         return true;
         
     } catch (const std::exception& e) {

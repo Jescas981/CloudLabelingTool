@@ -1,8 +1,8 @@
 #include "scene/Scene.h"
+#include "core/DeltaTime.h"
 #include "scene/Components.h"
-#include "scene/Systems.h"
 #include "rendering/BackgroundRenderer.h"
-
+#include "core/Macros.h"
 
 
 namespace CloudCore {
@@ -19,16 +19,13 @@ Scene::~Scene() {
 void Scene::onCreate(){
 }
 
-void Scene::onUpdate(Timestep deltaTime) {
+void Scene::onUpdate(DeltaTime deltaTime) {
+    UNUSED(deltaTime);
     // Update all systems
-ScriptSystem::update(*this, deltaTime);
-    TransformSystem::update(*this, deltaTime);
 }
 
 void Scene::onRender() {
     if (camera_) {
-        BackgroundRenderSystem::render(*this,*camera_);
-        PointCloudRenderSystem::render(*this, *camera_);
     }
 }
 

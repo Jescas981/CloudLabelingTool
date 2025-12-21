@@ -2,8 +2,10 @@
 #include "core/Camera.h"
 #include "core/Log.h"
 #include "renderer/Buffer.h"
+#include "renderer/RenderAPI.h"
 #include "renderer/VertexArray.h"
-#include <glad/glad.h>
+#include "renderer/Renderer.h"
+// #include <glad/glad.h>
 #include <rendering/BackgroundRenderer.h>
 
 namespace CloudCore {
@@ -39,15 +41,8 @@ void BackgroundRenderer::render() {
   }
 
   // Save current OpenGL state
-  GLboolean depthMaskEnabled;
-  glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMaskEnabled);
-  GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
-  GLboolean blendEnabled = glIsEnabled(GL_BLEND);
-
-  // Disable depth and blend for background
-  glDepthMask(GL_FALSE);
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
+  Renderer::setDepthTest(false);
+  Renderer::setBlending(false);
 
   // Use shader
   shader_->bind();
@@ -67,19 +62,13 @@ void BackgroundRenderer::render() {
   }
 
   vertexArray_->bind();
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+  Renderer::drawArrays(vertexArray_, 4, PrimitiveType::TriangleStrip);
   vertexArray_->unbind();
 
-  // Restore OpenGL state
-  if (depthTestEnabled) {
-    glEnable(GL_DEPTH_TEST);
-  }
-  if (depthMaskEnabled) {
-    glDepthMask(GL_TRUE);
-  }
-  if (blendEnabled) {
-    glEnable(GL_BLEND);
-  }
+  Renderer::setDepthTest(true);
+  Renderer::setBlending(true);
+
+
 }
 
 } // namespace CloudCore

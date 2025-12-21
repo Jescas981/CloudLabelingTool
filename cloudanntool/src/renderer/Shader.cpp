@@ -1,8 +1,6 @@
 #include "renderer/Shader.h"
-#include "core/Platform.h"
+#include "core/Macros.h"
 #include "platform/opengl/OpenGLShader.h"
-#include "renderer/RenderAPI.h"
-#include <iostream>
 
 namespace CloudCore {
 

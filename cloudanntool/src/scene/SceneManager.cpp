@@ -1,4 +1,5 @@
 #include "scene/SceneManager.h"
+#include "core/DeltaTime.h"
 
 namespace CloudCore {
 
@@ -41,7 +42,7 @@ Scene* SceneManager::getCurrentScene() const {
     return sceneStack_.empty() ? nullptr : sceneStack_.back().get();
 }
 
-void SceneManager::update(Timestep deltaTime) {
+void SceneManager::update(DeltaTime deltaTime) {
     if (auto scene = getCurrentScene()) {
         scene->onUpdate(deltaTime);
     }
