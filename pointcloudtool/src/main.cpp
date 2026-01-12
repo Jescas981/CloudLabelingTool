@@ -146,10 +146,10 @@ public:
 private:
   bool onKeyPressed(KeyPressedEvent &event) {
     switch (event.getKeyCode()) {
-    case KeyCode::Escape:
-      PC_INFO("Exiting application...");
-      stop();
-      return true;
+    // case KeyCode::Escape:
+    //   PC_INFO("Exiting application...");
+    //   stop();
+    //   return true;
 
     case KeyCode::Q:
       uiManager_->setEditorMode(EditorMode::Navigation);
@@ -305,7 +305,7 @@ private:
     PC_INFO("  F11:                   Screenshot");
     PC_INFO("  F12:                   Start/Stop recording");
     PC_INFO("  V:                     Toggle verbose logging");
-    PC_INFO("  ESC:                   Exit");
+    // PC_INFO("  ESC:                   Exit");
   }
 
   // Controllers
