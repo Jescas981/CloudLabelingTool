@@ -7,6 +7,21 @@ set(CMAKE_EXPORT_COMPILE_COMANDS ON)
 option(USE_LOCAL_CLOUDCORE "Use local CloudCore build from ../Perceptral" ON)
 option(STANDALONE_BUNDLE "Create standalone application bundle" ON)
 
+# Default build type
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING
+        "Choose the type of build." FORCE)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+        "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
+endif()
+
+# Optimization flags
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" CACHE STRING "" FORCE)
+elseif(MSVC)
+    set(CMAKE_CXX_FLAGS_RELEASE "/O2 /DNDEBUG" CACHE STRING "" FORCE)
+endif()
+
 if(USE_LOCAL_CLOUDCORE)
     message(STATUS "Using local CloudCore from ../Perceptral")
     # Add Perceptral as subdirectory for development
