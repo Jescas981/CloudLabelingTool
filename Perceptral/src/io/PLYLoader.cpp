@@ -27,16 +27,41 @@ std::unique_ptr<PointCloud> PLYLoader::load(const std::string& filepath)
         std::vector<float> y = vertexElement.getProperty<float>("y");
         std::vector<float> z = vertexElement.getProperty<float>("z");
         
-        // Read class labels (handle the case where they might not exist)
         std::vector<uint32_t> labels;
         bool hasLabels = false;
-        try {
-            labels = vertexElement.getProperty<uint32_t>("class");
-            hasLabels = true;
-        } catch (...) {
-            // No class labels in file, will default to 0
+
+        // List of possible property names
+        std::vector<std::string> propertyNames = { "class", "preds" };
+
+        // Helper lambda to try a type
+        auto tryReadProperty = [&](const std::string& name) -> bool {
+            try {
+                labels = vertexElement.getProperty<uint32_t>(name);
+                return true;
+            } catch (...) {
+                try {
+                    std::vector<int32_t> temp = vertexElement.getProperty<int32_t>(name);
+                    labels.assign(temp.begin(), temp.end());
+                    return true;
+                } catch (...) {
+                    return false;
+                }
+            }
+        };
+
+        // Try all possible property names
+        for (const auto& propName : propertyNames) {
+            if (tryReadProperty(propName)) {
+                hasLabels = true;
+                break;
+            }
         }
-        
+
+        if (!hasLabels) {
+            PC_CORE_WARN("Failed to load labels from 'class' or 'labels' as uint32 or int32");
+        }
+
+                        
         // Create PCL point cloud
         pcl::PointCloud<pcl::PointXYZL>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZL>());
         cloud->width = x.size();
