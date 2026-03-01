@@ -1,5 +1,0 @@
-add_subdirectory(glfw)
-add_subdirectory(glad)
-add_subdirectory(entt)
-add_subdirectory(spdlog)
-add_subdirectory(happly)
