@@ -1,3 +1,6 @@
-[submodule "pointcloudtool/external/nativefiledialog-extended"]
-	path = pointcloudtool/external/nativefiledialog-extended
+[submodule "external/nativefiledialog-extended"]
+	path = external/nativefiledialog-extended
 	url = https://github.com/btzy/nativefiledialog-extended.git
+[submodule "external/Perceptral"]
+	path = external/Perceptral
+	url = https://github.com/Jescas981/Perceptral.git
