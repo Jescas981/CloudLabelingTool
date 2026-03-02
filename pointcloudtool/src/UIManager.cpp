@@ -876,7 +876,7 @@ void UIManager::renderLabelingToolbox()
         int buttonsPerRow = 2;
         int buttonCount = 0;
         for (const auto& label : labels) {
-            if (buttonCount >= 6) break; // Only show first 6 for quick access
+            // if (buttonCount >= 6) break; // Only show first 6 for quick access
 
             // Color button for label
             ImVec4 btnColor(label.color.x(), label.color.y(), label.color.z(), 1.0f);
@@ -933,7 +933,7 @@ void UIManager::renderLabelingToolbox()
         int visButtonsPerRow = 2;
         int visButtonCount = 0;
         for (const auto& label : labels) {
-            if (visButtonCount >= 6) break; // Only show first 6 for quick access
+            // if (visButtonCount >= 6) break; // Only show first 6 for quick access
 
             bool isHidden = selectedObj->isLabelHidden(label.id);
 

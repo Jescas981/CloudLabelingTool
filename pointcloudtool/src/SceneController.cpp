@@ -224,7 +224,7 @@ bool SceneController::savePointCloudToFile(const std::string& objectName, const 
             for (size_t i = 0; i < cloud->points.size(); ++i) {
                 cloud->points[i].label = comp->labels[i];
             }
-            PC_ERROR("Assigned {} labels to point cloud", comp->labels.size());
+            PC_INFO("Assigned {} labels to point cloud", comp->labels.size());
         }
     }
 
